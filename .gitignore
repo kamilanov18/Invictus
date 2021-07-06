@@ -108,3 +108,5 @@ config.js
 
 # testing file for all db operations
 test.js
+
+docs

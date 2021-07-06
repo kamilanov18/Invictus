@@ -102,3 +102,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# This file holds the sql data for the server
+config.js

@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "colors": "^1.4.0",
     "express": "^4.17.1",
     "msnodesqlv8": "^2.2.0",
     "mssql": "^7.1.3",

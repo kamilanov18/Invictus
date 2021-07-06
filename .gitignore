@@ -105,3 +105,6 @@ dist
 
 # This file holds the sql data for the server
 config.js
+
+# testing file for all db operations
+test.js

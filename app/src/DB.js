@@ -87,7 +87,7 @@ class Log {
      * @returns {void}
      */
     static logError(funcName,err) {
-        console.log(`${"[!]".red.bold} ${this.#getDate().yellow} DB.js: function ${funcName} encountered an error: ${err}`);
+        console.log(`${"[!]".red.bold} ${this.#getDate().yellow} DB.js: function ${funcName} encountered an error: ${err.message}`);
     }
 
     /**
@@ -97,7 +97,7 @@ class Log {
      * @returns {void}
      */
     static logInfo(funcName) {
-        console.log(`${"[i]".blue.bold} ${this.#getDate()} DB.js: function ${funcName} successfully executed`);
+        console.log(`${"[i]".blue.bold} ${this.#getDate().yellow} DB.js: function ${funcName} successfully executed`);
     }
 
 };
@@ -188,16 +188,31 @@ class DBManager {
     async createUser(user) {
         try {
             const pool = await this.#pool;
-            const result = await pool.request()
-                .input("Username",sql.NVarChar,user.username)
-                .input("Password",sql.NVarChar,user.password)
-                .input("FirstName",sql.NVarChar,user.firstName)
-                .input("LastName",sql.NVarChar,user.lastName)
-                .input("CreatorId",sql.Int,user.creatorId)
-                .input("DateOfLastChange",sql.NVarChar,user.dateOfLastChange)
-                .input("LatestChangeUserId",sql.Int,user.latestChangeUserId)
-                .input("IsAdmin",sql.Bit,user.isAdmin)
-                .execute("CreateUser");
+            const isUsersEmpty = await pool.request()
+                .query("SELECT Id FROM Users")
+            if(isUsersEmpty.recordset[0]) {
+
+                const result = await pool.request()
+                    .input("Username",sql.NVarChar,user.username)
+                    .input("Password",sql.NVarChar,user.password)
+                    .input("FirstName",sql.NVarChar,user.firstName)
+                    .input("LastName",sql.NVarChar,user.lastName)
+                    .input("CreatorId",sql.Int, user.creatorId)
+                    .input("LatestChangeUserId",sql.Int,user.latestChangeUserId)
+                    .input("IsAdmin",sql.Bit,user.isAdmin)
+                    .execute("CreateUser");
+                    
+            } else {
+                const result = await pool.request()
+                    .input("Username",sql.NVarChar,user.username)
+                    .input("Password",sql.NVarChar,user.password)
+                    .input("FirstName",sql.NVarChar,user.firstName)
+                    .input("LastName",sql.NVarChar,user.lastName)
+                    .input("CreatorId",sql.Int, 2)
+                    .input("LatestChangeUserId",sql.Int,2)
+                    .input("IsAdmin",sql.Bit,1)
+                    .execute("CreateUser");
+            }
             Log.logInfo("createUser");
         } catch(err) {
             Log.logError("createUser",err);

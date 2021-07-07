@@ -201,7 +201,7 @@ class DBManager {
                     .input("LatestChangeUserId",sql.Int,user.latestChangeUserId)
                     .input("IsAdmin",sql.Bit,user.isAdmin)
                     .execute("CreateUser");
-                    
+
             } else {
                 const result = await pool.request()
                     .input("Username",sql.NVarChar,user.username)
@@ -227,6 +227,8 @@ class DBManager {
      async createTeam(team) {
         try {
             const pool = await this.#pool;
+            
+            Log.logInfo("createTeam");
         } catch(err) {
             Log.logError("createTeam",err);
         }

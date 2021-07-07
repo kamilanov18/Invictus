@@ -224,6 +224,62 @@ class DBManager {
     }
 
     /**
+    * @param {number} id
+    * @author Kristian Milanov
+    * @returns {user}
+    */
+    async getUserById(id) {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .input("UserId",sql.Int,id)
+                .query("SELECT * FROM Users WHERE Id = @UserId")
+            
+            Log.logInfo("getUserById");
+            return results.recordset
+        } catch(err) {
+            Log.logError("getUserById",err);
+        }
+    }
+
+    /**
+    * @param {number} userId
+    * @param {user} newUser
+    * @param {number} updaterId
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async updateUser(userId,newUser,updaterId) {
+        try {
+            const pool = await this.#pool;
+            
+            Validations.validateName(newUser.firstName);
+            Validations.validateName(newUser.lastName)
+            const oldUser = getUserById(userId);
+
+            const results = await pool.request()
+                .input("Username",sql.NVarChar,newUser.username)
+                .input("Password",sql.NVarChar,newUser.password)
+                .input("FirstName",sql.NVarChar,newUser.firstName)
+                .input("LastName",sql.NVarChar,newUser.lastName)
+                .input("LastChangeUserId",sql.Int,updaterId)
+                .query(`UPDATE Users 
+                    SET Username = @Username
+                        Password = @Password
+                        FirstName = @FirstName
+                        LastName = @LastName
+                        LastChangeUserId = @LastChangeUserId  
+                        DateOfLastChange = GETDATE()
+                    WHERE Id = @UserId`)
+
+            Log.logInfo("updateUser");
+        } catch(err) {
+            Log.logError("updateUser",err);
+        }
+    }
+
+    /**
      * Adds a team to the database
      * @param {team} team- Holds all relevant team information
      * @author Kristian Milanov

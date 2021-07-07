@@ -188,6 +188,10 @@ class DBManager {
     async createUser(user) {
         try {
             const pool = await this.#pool;
+
+            Validations.validateName(user.firstName);
+            Validations.validateName(user.lastName);
+
             const isUsersEmpty = await pool.request()
                 .query("SELECT Id FROM Users")
             if(isUsersEmpty.recordset[0]) {
@@ -227,7 +231,14 @@ class DBManager {
      async createTeam(team) {
         try {
             const pool = await this.#pool;
-            
+
+            Validations.validateTitle(team.title);
+
+            const result = pool.request()
+                .input("Title",sql.NVarChar,team.title)
+                .input("CreatorId",sql.Int,team.creatorId)
+                .execute("CreateTeam")
+
             Log.logInfo("createTeam");
         } catch(err) {
             Log.logError("createTeam",err);
@@ -242,6 +253,20 @@ class DBManager {
      async createTask(task) {
         try {
             const pool = await this.#pool;
+
+            Validations.validateTitle(task.title);
+            Validations.validateDescription(task.description);
+
+            const result = pool.request()
+                .input("ProjectId",sql.Int,task.projectId)
+                .input("AsigneeId",sql.Int,task.asigneeId)
+                .input("Title",sql.NVarChar,task.title)
+                .input("Description",sql.NVarChar,task.description)
+                .input("Status",sql.Int,task.status)
+                .input("CreatorId",sql.Int,task.creatorId)
+                .execute("CreateTask")
+
+            Log.logInfo("createTask");
         } catch(err) {
             Log.logError("createTask",err);
         }
@@ -255,6 +280,14 @@ class DBManager {
      async createWorklog(worklog) {
         try {
             const pool = await this.#pool;
+
+            const results = await pool.request()
+                .input("TaskId",sql.Int,worklog.taskId)
+                .input("Time",sql.Int,worklog.time)
+                .input("CreatorId",sql.Int,worklog.creatorId)
+                .execute("CreateWorklog")
+            
+            Log.logInfo("createWorklog");
         } catch(err) {
             Log.logError("createWorklog",err);
         }
@@ -268,12 +301,23 @@ class DBManager {
      async createProject(project) {
         try {
             const pool = await this.#pool;
+
+            Validations.validateTitle(project.title);
+            Validations.validateDescription(project.description);
+
+            const results = await pool.request()
+                .input("Title",sql.NVarChar,project.title)
+                .input("Description",sql.NVarChar,project.description)
+                .input("CreatorId",sql.Int,project.creatorId)
+                .execute("CreateProject");
+            Log.logInfo("createProject");
         } catch(err) {
             Log.logError("createProject",err);
         }
     }
+    
 };
 
 const DBM = new DBManager();
 
-module.exports = { DBM,Log, Validations };
+module.exports = { DBM };

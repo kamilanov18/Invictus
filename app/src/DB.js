@@ -309,6 +309,24 @@ class DBManager {
     }
 
     /**
+    * @param {number} userId -Id of the user to be deleted
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async deleteUser(userId) {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .input("UserId",sql.Int,userId)
+                .execute("DeleteUser")
+            Log.logInfo("deleteUser");
+        } catch(err) {
+            Log.logError("deleteUser",err);
+        }
+    }
+
+    /**
      * Adds a team to the database
      * @param {team} team- Holds all relevant team information
      * @author Kristian Milanov
@@ -376,6 +394,25 @@ class DBManager {
             Log.logInfo("updateTeam");
         } catch(err) {
             Log.logError("updateTeam",err);
+        }
+    }
+
+    /**
+    * @param {*} teamId
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async deleteTeam(teamId) {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .input("TeamId",sql.Int,teamId)
+                .execute("DeleteTeam");
+
+            Log.logInfo("deleteTeam");
+        } catch(err) {
+            Log.logError("deleteTeam",err);
         }
     }
 
@@ -466,6 +503,24 @@ class DBManager {
         }
     }
 
+    /**
+    * @param {*} taskId
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async deleteTask(taskId) {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .input("TaskId",sql.Int,taskId)
+                .execute("DeleteTask");
+
+            Log.logInfo("deleteTask");
+        } catch(err) {
+            Log.logError("deleteTask",err);
+        }
+    }
 
     /**
      * Adds a worklog to the database
@@ -621,6 +676,25 @@ class DBManager {
             Log.logInfo("updateProject");
         } catch(err) {
             Log.logError("updateProject",err);
+        }
+    }
+
+    /**
+    * @param {number} projectId
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async deleteProject(projectId) {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .input("ProjectId",sql.Int,projectId)
+                .execute("DeleteProject");
+                
+            Log.logInfo("deleteProject");
+        } catch(err) {
+            Log.logError("deleteProject",err);
         }
     }
 

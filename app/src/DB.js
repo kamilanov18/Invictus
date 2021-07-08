@@ -236,10 +236,10 @@ class DBManager {
                 .input("UserId",sql.Int,id)
                 .query("SELECT Username, FirstName, LastName, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId, IsAdmin FROM Users WHERE Id = @UserId")
             
-            Log.logInfo("getUserById");
-            return results.recordset
+            Log.logInfo("getPublicUserDataById");
+            return results.recordset[0];
         } catch(err) {
-            Log.logError("getUserById",err);
+            Log.logError("getPublicUserDataById",err);
         }
     }
 
@@ -260,7 +260,7 @@ class DBManager {
                 .query("SELECT * FROM Users WHERE Id = @UserId")
             
             Log.logInfo("getAllUserDataById");
-            return results.recordset
+            return results.recordset[0];
         } catch(err) {
             Log.logError("getAllUserDataById",err);
         }

@@ -2,6 +2,7 @@ const sql = require("mssql/msnodesqlv8");
 const { config } = require("./config");
 const colors = require("colors");
 
+
 // ඞ sus
 /**
  * Static class used in various data validations throughout the app
@@ -224,17 +225,18 @@ class DBManager {
     }
 
     /**
-    * @param {number} id
+     * Gets all data fields of the specified user without the Password and Id
+    * @param {number} id - Id of the user
     * @author Kristian Milanov
     * @returns {user}
     */
-    async getUserById(id) {
+    async getPublicUserDataById(id) {
         try {
             const pool = await this.#pool;
     
             const results = await pool.request()
                 .input("UserId",sql.Int,id)
-                .query("SELECT * FROM Users WHERE Id = @UserId")
+                .query("SELECT Username, FirstName, LastName, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId, IsAdmin FROM Users WHERE Id = @UserId")
             
             Log.logInfo("getUserById");
             return results.recordset
@@ -244,9 +246,31 @@ class DBManager {
     }
 
     /**
-    * @param {number} userId
-    * @param {user} newUser
-    * @param {number} updaterId
+     * Retrieves all user data
+    * @param {number} id - Id of the user
+    * @author Kristian Milanov
+    * @returns {user}
+    */
+     async #getAllUserDataById(id) {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .input("UserId",sql.Int,id)
+                .query("SELECT * FROM Users WHERE Id = @UserId")
+            
+            Log.logInfo("getAllUserDataById");
+            return results.recordset
+        } catch(err) {
+            Log.logError("getAllUserDataById",err);
+        }
+    }
+
+    /**
+    * Updates the specified user
+    * @param {number} userId - Id of the user to be updated
+    * @param {user} newUser - User object with the new properties
+    * @param {number} updaterId - Id of the user which updated this data type
     * @author Kristian Milanov
     * @returns {void}
     */
@@ -255,21 +279,26 @@ class DBManager {
             const pool = await this.#pool;
             
             Validations.validateName(newUser.firstName);
-            Validations.validateName(newUser.lastName)
-            const oldUser = getUserById(userId);
+            Validations.validateName(newUser.lastName);
+
+            const oldUser = this.#getAllUserDataById(userId);
+            for(const key in newUser) {
+                oldUser[key] = newUser[key];
+            }
 
             const results = await pool.request()
-                .input("Username",sql.NVarChar,newUser.username)
-                .input("Password",sql.NVarChar,newUser.password)
-                .input("FirstName",sql.NVarChar,newUser.firstName)
-                .input("LastName",sql.NVarChar,newUser.lastName)
-                .input("LastChangeUserId",sql.Int,updaterId)
+                .input("Username",sql.NVarChar,oldUser.username)
+                .input("Password",sql.NVarChar,oldUser.password)
+                .input("FirstName",sql.NVarChar,oldUser.firstName)
+                .input("LastName",sql.NVarChar,oldUser.lastName)
+                .input("LatestChangeUserId",sql.Int,updaterId)
+                .input("UserId",sql.Int,userId)
                 .query(`UPDATE Users 
-                    SET Username = @Username
-                        Password = @Password
-                        FirstName = @FirstName
-                        LastName = @LastName
-                        LastChangeUserId = @LastChangeUserId  
+                    SET Username = @Username,
+                        Password = @Password,
+                        FirstName = @FirstName,
+                        LastName = @LastName,
+                        LatestChangeUserId = @LatestChangeUserId,
                         DateOfLastChange = GETDATE()
                     WHERE Id = @UserId`)
 
@@ -302,6 +331,55 @@ class DBManager {
     }
 
     /**
+    * Retrieves info about the specified team
+    * @param {number} id - Id of the team
+    * @author Kristian Milanov
+    * @returns {team}
+    */
+    async getTeamById(id) {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .input("TeamId",sql.Int,id)
+                .query("SELECT Title, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Teams WHERE Id = @TeamId");
+            Log.logInfo("getTeamById");
+            return results.recordset[0];
+        } catch(err) {
+            Log.logError("getTeamById",err);
+        }
+    }
+
+    /**
+    * Updates the specified team
+    * @param {number} teamId - Team's id
+    * @param {string} newTitle - new team's data
+    * @param {number} updaterId - Id of the user which updated this data type
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async updateTeam(teamId,newTitle,updaterId) {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .input("Title",sql.NVarChar,newTitle)
+                .input("TeamId",sql.Int,teamId)
+                .input("LatestChangeUserId",sql.Int,updaterId)
+                .query(`
+                    UPDATE Teams
+                    SET Title = @Title,
+                        LatestChangeUserId = @LatestChangeUserId,
+                        DateOfLastChange = GETDATE()
+                    WHERE Id = @TeamId
+                `);
+            Log.logInfo("updateTeam");
+        } catch(err) {
+            Log.logError("updateTeam",err);
+        }
+    }
+
+    /**
      * Adds a task to the database
      * @param {task} task- Holds all relevant task information
      * @author Kristian Milanov
@@ -329,6 +407,67 @@ class DBManager {
     }
 
     /**
+    * @param {number} id - Id of the task
+    * @author Kristian Milanov
+    * @returns {task}
+    */
+    async getTaskById(id) {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .input("TaskId",sql.Int,id)
+                .query("SELECT ProjectId, AsigneeId, Title, Description, Status, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Tasks WHERE Id = @TaskId")
+            Log.logInfo("getTaskById");
+            return results.recordset[0];
+        } catch(err) {
+            Log.logError("getTaskById",err);
+        }
+    }
+
+    /**
+    * @param {number} taskId - Id of the task to be updated
+    * @param {task} newTask - Holds the new info of the task
+    * @param {number} updaterId - Id of the user which updated this data type
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async updateTask(taskId, newTask, updaterId) {
+        try {
+            const pool = await this.#pool;
+            
+            const oldTask = this.getTaskById(taskId);
+            for(const key in newTask) {
+                oldTask[key] = newTask[key];
+            }
+
+            const results = await pool.request()
+                .input("Title",sql.NVarChar,newTask.title)
+                .input("ProjectId",sql.Int,newTask.projectId)
+                .input("AsigneeId",sql.Int,newTask.asigneeId)
+                .input("Description",sql.NVarChar,newTask.description)
+                .input("Status",sql.Int,newTask.status)
+                .input("LatestChangeUserId",sql.Int,updaterId)
+                .input("TaskId",sql.Int,taskId)
+                .query(`
+                    UPDATE Tasks
+                    SET ProjectId = @ProjectId,
+                        AsigneeId = @AsigneeId,
+                        Title = @Title,
+                        Description = @Description,
+                        Status = @Status,
+                        LatestChangeUserId = @LatestChangeUserId,
+                        DateOfLastChange = GETDATE()
+                    WHERE Id = @TaskId
+                `);
+            Log.logInfo("updateTask");
+        } catch(err) {
+            Log.logError("updateTask",err);
+        }
+    }
+
+
+    /**
      * Adds a worklog to the database
      * @param {worklog} worklog- Holds all relevant worklog information
      * @author Kristian Milanov
@@ -346,6 +485,62 @@ class DBManager {
             Log.logInfo("createWorklog");
         } catch(err) {
             Log.logError("createWorklog",err);
+        }
+    }
+
+    /**
+    * @param {number} id -Id of the worklog
+    * @author Kristian Milanov
+    * @returns {worklog}
+    */
+    async getWorklogById(id) {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .input("WorklogId",sql.Int,id)
+                .query("SELECT TaskId, Time, CreatorId, Date FROM Worklogs WHERE Id = @WorklogId")
+            Log.logInfo("getWorklogById");
+            return results.recordset[0];
+        } catch(err) {
+            Log.logError("getWorklogById",err);
+        }
+    }
+
+    /**
+    * @param {number} worklogId - Id of the worklog to be updated
+    * @param {worklog} newWorklog - Hold new worklog info
+    * @param {number} updaterId - Id of the user which updated this data type
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async updateWorklog(worklogId,newWorklog) {
+        try {
+            const pool = await this.#pool;
+            
+            const oldWorklog = this.getWorklogById(worklogId);
+            for(const key in newWorklog) {
+                oldWorklog[key] = newWorklog[key];
+            }
+
+            const results = await pool.request()
+                .input("TaskId",sql.Int,oldWorklog.taskId)
+                .input("Time",sql.Int,oldWorklog.time)
+                .input("CreatorId",sql.Int,oldWorklog.creatorId)
+                .input("Date",sql.NVarChar,oldWorklog.date)
+                .input("WorklogId",sql.Int,worklogId)
+                .query(`
+                    UPDATE Worklogs
+                    SET TaskId = @TaskId,
+                        Time = @Time,
+                        CreatorId = @CreatorId,
+                        Date = @Date
+                    WHERE Id = @WorklogId
+                `);
+            Log.logInfo("updateWorklog");
+            return results.recordsets[0];
+        } catch(err) {
+            Log.logError("updateWorklog",err);
         }
     }
 
@@ -372,6 +567,63 @@ class DBManager {
         }
     }
     
+    /**
+    * @param {number} id - Id of the project
+    * @author Kristian Milanov
+    * @returns {project}
+    */
+    async getProjectById(id) {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .input("ProjectId",sql.Int,id)
+                .query("SELECT Title, Description, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Projects WHERE Id = @ProjectId")
+            Log.logInfo("getProjectById");
+            return results.recordsets[0];
+        } catch(err) {
+            Log.logError("getProjectById",err);
+        }
+    }
+
+    /**
+    * @param {number} projectId - Id of the project you wish to update
+    * @param {project} newProject - New project object, containing 
+    * @param {number} updaterId - Id of the user, which updated this project
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async updateProject(projectId,newProject,updaterId) {
+        try {
+            const pool = await this.#pool;
+            
+            Validations.validateTitle(newProject.title);
+            Validations.validateDescription(newProject.description);
+
+            const oldProject = this.getWorklogById(projectId);
+            for(const key in newProject) {
+                oldProject[key] = newProject[key];
+            }
+
+            const results = await pool.request()
+                .input("Title",sql.NVarChar,oldProject.title)
+                .input("Description",sql.NVarChar,oldProject.description)
+                .input("ProjectId",sql.Int,projectId)
+                .input("LatestChangeUserId",sql.Int,updaterId)
+                .query(`
+                    UPDATE Projects
+                    SET Title = @Title,
+                        Description = @Description,
+                        LatestChangeUserId = @LatestChangeUserId,
+                        DateOfLastChange = GETDATE()
+                    WHERE Id = @ProjectId
+                `);
+            Log.logInfo("updateProject");
+        } catch(err) {
+            Log.logError("updateProject",err);
+        }
+    }
+
 };
 
 const DBM = new DBManager();

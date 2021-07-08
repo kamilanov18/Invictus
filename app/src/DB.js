@@ -62,6 +62,17 @@ class Validations {
         if(desc.length <= 250 && desc.length<=0)
             throw new Error("Titles have to be less than 250 characters");
     }
+
+    /**
+     * Validates wether the supplied information containes only numbers
+     * @param {*} data - Data to be checked
+     * @returns {void}
+     */
+    static validateNumericability(data) {
+        this.#pattern = /^[0-9]+$/;
+        if(!this.#pattern.test(data))
+            throw new Error("This field can only contain numbers");
+    }
 }
 
 /**
@@ -193,31 +204,16 @@ class DBManager {
             Validations.validateName(user.firstName);
             Validations.validateName(user.lastName);
 
-            const isUsersEmpty = await pool.request()
-                .query("SELECT Id FROM Users")
-            if(isUsersEmpty.recordset[0]) {
+             const result = await pool.request()
+                 .input("Username",sql.NVarChar,user.username)
+                 .input("Password",sql.NVarChar,user.password)
+                 .input("FirstName",sql.NVarChar,user.firstName)
+                 .input("LastName",sql.NVarChar,user.lastName)
+                 .input("CreatorId",sql.Int, user.creatorId)
+                 .input("LatestChangeUserId",sql.Int,user.latestChangeUserId)
+                 .input("IsAdmin",sql.Bit,user.isAdmin)
+                 .execute("CreateUser");
 
-                const result = await pool.request()
-                    .input("Username",sql.NVarChar,user.username)
-                    .input("Password",sql.NVarChar,user.password)
-                    .input("FirstName",sql.NVarChar,user.firstName)
-                    .input("LastName",sql.NVarChar,user.lastName)
-                    .input("CreatorId",sql.Int, user.creatorId)
-                    .input("LatestChangeUserId",sql.Int,user.latestChangeUserId)
-                    .input("IsAdmin",sql.Bit,user.isAdmin)
-                    .execute("CreateUser");
-
-            } else {
-                const result = await pool.request()
-                    .input("Username",sql.NVarChar,user.username)
-                    .input("Password",sql.NVarChar,user.password)
-                    .input("FirstName",sql.NVarChar,user.firstName)
-                    .input("LastName",sql.NVarChar,user.lastName)
-                    .input("CreatorId",sql.Int, 2)
-                    .input("LatestChangeUserId",sql.Int,2)
-                    .input("IsAdmin",sql.Bit,1)
-                    .execute("CreateUser");
-            }
             Log.logInfo("createUser");
         } catch(err) {
             Log.logError("createUser",err);
@@ -233,7 +229,9 @@ class DBManager {
     async getPublicUserDataById(id) {
         try {
             const pool = await this.#pool;
-    
+            
+            Validations.validateNumericability(id);
+
             const results = await pool.request()
                 .input("UserId",sql.Int,id)
                 .query("SELECT Username, FirstName, LastName, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId, IsAdmin FROM Users WHERE Id = @UserId")
@@ -255,6 +253,8 @@ class DBManager {
         try {
             const pool = await this.#pool;
     
+            Validations.validateNumericability(id);
+
             const results = await pool.request()
                 .input("UserId",sql.Int,id)
                 .query("SELECT * FROM Users WHERE Id = @UserId")
@@ -278,13 +278,15 @@ class DBManager {
         try {
             const pool = await this.#pool;
             
-            Validations.validateName(newUser.firstName);
-            Validations.validateName(newUser.lastName);
-
             const oldUser = this.#getAllUserDataById(userId);
             for(const key in newUser) {
                 oldUser[key] = newUser[key];
             }
+
+            Validations.validateName(oldUser.firstName);
+            Validations.validateName(oldUser.lastName);
+            Validations.validateNumericability(userId);
+            Validations.validateNumericability(updaterId);
 
             const results = await pool.request()
                 .input("Username",sql.NVarChar,oldUser.username)
@@ -316,7 +318,9 @@ class DBManager {
     async deleteUser(userId) {
         try {
             const pool = await this.#pool;
-    
+            
+            Validations.validateNumericability(userId);
+
             const results = await pool.request()
                 .input("UserId",sql.Int,userId)
                 .execute("DeleteUser")
@@ -336,6 +340,7 @@ class DBManager {
             const pool = await this.#pool;
 
             Validations.validateTitle(team.title);
+            Validations.validateNumericability(team.creatorId);
 
             const result = pool.request()
                 .input("Title",sql.NVarChar,team.title)
@@ -357,7 +362,9 @@ class DBManager {
     async getTeamById(id) {
         try {
             const pool = await this.#pool;
-    
+            
+            Validations.validateNumericability(id);
+
             const results = await pool.request()
                 .input("TeamId",sql.Int,id)
                 .query("SELECT Title, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Teams WHERE Id = @TeamId");
@@ -379,7 +386,11 @@ class DBManager {
     async updateTeam(teamId,newTitle,updaterId) {
         try {
             const pool = await this.#pool;
-    
+            
+            Validations.validateNumericability(teamId);
+            Validations.validateNumericability(updaterId);
+            Validations.validateTitle(newTitle);
+
             const results = await pool.request()
                 .input("Title",sql.NVarChar,newTitle)
                 .input("TeamId",sql.Int,teamId)
@@ -406,6 +417,8 @@ class DBManager {
         try {
             const pool = await this.#pool;
     
+            Validations.validateNumericability(teamId);
+
             const results = await pool.request()
                 .input("TeamId",sql.Int,teamId)
                 .execute("DeleteTeam");
@@ -427,6 +440,9 @@ class DBManager {
 
             Validations.validateTitle(task.title);
             Validations.validateDescription(task.description);
+            Validations.validateNumericability(task.projectId);
+            Validations.validateNumericability(task.asigneeId);
+            Validations.validateNumericability(task.status)
 
             const result = pool.request()
                 .input("ProjectId",sql.Int,task.projectId)
@@ -452,6 +468,8 @@ class DBManager {
         try {
             const pool = await this.#pool;
     
+            Validations.validateNumericability(id)
+
             const results = await pool.request()
                 .input("TaskId",sql.Int,id)
                 .query("SELECT ProjectId, AsigneeId, Title, Description, Status, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Tasks WHERE Id = @TaskId")
@@ -477,6 +495,14 @@ class DBManager {
             for(const key in newTask) {
                 oldTask[key] = newTask[key];
             }
+
+            Validations.validateNumericability(updaterId);
+            Validations.validateNumericability(taskId);
+            Validations.validateNumericability(oldTask.projectId);
+            Validations.validateNumericability(oldTask.asigneeId);
+            Validations.validateTitle(oldTask.title);
+            Validations.validateDescription(oldTask.description)
+            Validations.validateNumericability(oldTask.status)
 
             const results = await pool.request()
                 .input("Title",sql.NVarChar,newTask.title)
@@ -512,6 +538,8 @@ class DBManager {
         try {
             const pool = await this.#pool;
     
+            Validations.validateNumericability(taskId);
+
             const results = await pool.request()
                 .input("TaskId",sql.Int,taskId)
                 .execute("DeleteTask");
@@ -530,6 +558,10 @@ class DBManager {
      async createWorklog(worklog) {
         try {
             const pool = await this.#pool;
+
+            Validations.validateNumericability(worklog.taskId);
+            Validations.validateNumericability(worklog.time);
+            Validations.validateNumericability(worklog.creatorId);
 
             const results = await pool.request()
                 .input("TaskId",sql.Int,worklog.taskId)
@@ -552,6 +584,8 @@ class DBManager {
         try {
             const pool = await this.#pool;
     
+            Validations.validateNumericability(id);
+
             const results = await pool.request()
                 .input("WorklogId",sql.Int,id)
                 .query("SELECT TaskId, Time, CreatorId, Date FROM Worklogs WHERE Id = @WorklogId")
@@ -578,6 +612,11 @@ class DBManager {
                 oldWorklog[key] = newWorklog[key];
             }
 
+            Validations.validateNumericability(worklogId);
+            Validations.validateNumericability(oldWorklog.taskId);
+            Validations.validateNumericability(oldWorklog.time);
+            Validations.validateNumericability(oldWorklog.creatorId);
+
             const results = await pool.request()
                 .input("TaskId",sql.Int,oldWorklog.taskId)
                 .input("Time",sql.Int,oldWorklog.time)
@@ -600,6 +639,27 @@ class DBManager {
     }
 
     /**
+    * @param {*} id - Id of the worklog ot be deleted
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async deleteWorklog(id) {
+        try {
+            const pool = await this.#pool;
+            
+            Validations.validateNumericability(id);
+
+            const results = await pool.request()
+                .input("WorklogId",sql.Int,id)
+                .query("DELETE FROM Worklogs WHERE Id = @WorklogId")
+
+            Log.logInfo("deleteWorklog");
+        } catch(err) {
+            Log.logError("deleteWorklog",err);
+        }
+    }
+
+    /**
      * Adds a project to the database
      * @param {project} project- Holds all relevant project information
      * @author Kristian Milanov
@@ -610,6 +670,7 @@ class DBManager {
 
             Validations.validateTitle(project.title);
             Validations.validateDescription(project.description);
+            Validations.validateNumericability(project.creatorId);
 
             const results = await pool.request()
                 .input("Title",sql.NVarChar,project.title)
@@ -631,6 +692,8 @@ class DBManager {
         try {
             const pool = await this.#pool;
     
+            Validations.validateNumericability(id);
+
             const results = await pool.request()
                 .input("ProjectId",sql.Int,id)
                 .query("SELECT Title, Description, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Projects WHERE Id = @ProjectId")
@@ -651,14 +714,16 @@ class DBManager {
     async updateProject(projectId,newProject,updaterId) {
         try {
             const pool = await this.#pool;
-            
-            Validations.validateTitle(newProject.title);
-            Validations.validateDescription(newProject.description);
 
             const oldProject = this.getWorklogById(projectId);
             for(const key in newProject) {
                 oldProject[key] = newProject[key];
             }
+
+            Validations.validateTitle(oldProject.title);
+            Validations.validateDescription(oldProject.description);
+            Validations.validateNumericability(projectId);
+            Validations.validateNumericability(updaterId);
 
             const results = await pool.request()
                 .input("Title",sql.NVarChar,oldProject.title)
@@ -687,17 +752,146 @@ class DBManager {
     async deleteProject(projectId) {
         try {
             const pool = await this.#pool;
-    
-            const results = await pool.request()
-                .input("ProjectId",sql.Int,projectId)
-                .execute("DeleteProject");
-                
+            
+            Validations.validateNumericability(projectId);
+
+            const tasks = await pool.request()
+                .input("Id",sql.Int,projectId)
+                .query("SELECT Id FROM Tasks WHERE ProjectId = @Id");
+
+            for(const task of tasks.recordset) {
+                await pool.request()
+                    .input("TaskId",sql.Int,task.Id)
+                    .execute("DeleteTask")
+            }
+
+            await pool.request()
+                .input("Id",sql.Int,projectId)
+                .query("DELETE FROM Projects WHERE Id = @Id");
+
             Log.logInfo("deleteProject");
         } catch(err) {
             Log.logError("deleteProject",err);
         }
     }
 
+    /**
+    * @param {number} userId
+    * @param {number} teamId
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async addUserToTeam(userId,teamId) {
+        try {
+            const pool = await this.#pool;
+
+            Validations.validateNumericability(userId);
+            Validations.validateNumericability(teamId);
+
+            const results = await pool.request()
+                .input("UserId",sql.Int,userId)
+                .input("TeamId",sql.Int,teamId)
+                .query("INSERT INTO UsersTeams (UserId,TeamId) VALUES (@UserId,@TeamId)")
+            Log.logInfo("addUserToTeam");
+        } catch(err) {
+            Log.logError("addUserToTeam",err);
+        }
+    }
+
+    /**
+    * @param {number} userId
+    * @param {number} teamId
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async removeUserFromTeam(userId,teamId) {
+        try {
+            const pool = await this.#pool;
+            
+            Validations.validateNumericability(userId);
+            Validations.validateNumericability(teamId);
+
+            const results = await pool.request()
+                .input("UserId",sql.Int,userId)
+                .input("TeamId",sql.Int,teamId)
+                .query("DELETE FROM UsersTeams WHERE UserId = @UserId AND TeamId = @TeamId")
+            Log.logInfo("removeUserFromTeam");
+        } catch(err) {
+            Log.logError("removeUserFromTeam",err);
+        }
+    }
+
+    /**
+    * @param {number} teamId
+    * @param {number} projectId
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async addTeamToProject(teamId,projectId) {
+        try {
+            const pool = await this.#pool;
+    
+            Validations.validateNumericability(projectId);
+            Validations.validateNumericability(teamId);
+
+            const results = await pool.request()
+                .input("ProjectId",sql.Int,projectId)
+                .input("TeamId",sql.Int,teamId)
+                .query("INSERT INTO TeamsProjects (ProjectId,TeamId) VALUES (@ProjectId,@TeamId)")
+
+            Log.logInfo("addTeamToProject");
+        } catch(err) {
+            Log.logError("addTeamToProject",err);
+        }
+    }
+
+    /**
+    * @param {number} teamId
+    * @param {number} projectId
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async removeTeamFromProject(teamId,projectId) {
+        try {
+            const pool = await this.#pool;
+    
+            Validations.validateNumericability(projectId);
+            Validations.validateNumericability(teamId);
+
+            const results = await pool.request()
+                .input("ProjectId",sql.Int,projectId)
+                .input("TeamId",sql.Int,teamId)
+                .query("DELETE FROM TeamsProjects WHERE ProjectId = @ProjectId AND TeamId = @TeamId")
+            Log.logInfo("removeTeamFromProject");
+        } catch(err) {
+            Log.logError("removeTeamFromProject",err);
+        }
+    }
+
+    /**
+     * Checks if the user registered under this username and password exists in the DB and returns their Id if found and 0 if not.
+    * @param {string} username
+    * @param {string} password
+    * @author Kristian Milanov
+    * @returns {number}
+    */
+    async validateUser(username,password) {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .input("Username",sql.NVarChar,username)
+                .input("Password",sql.NVarChar,password)
+                .query("SELECT Id FROM Users WHERE Username = @Username AND Password = @Password")
+
+            Log.logInfo("validateUser");
+            if(results.recordset.length==0)
+                return 0;
+            return results.recordset[0].Id;
+        } catch(err) {
+            Log.logError("validateUser",err);
+        }
+    }
 };
 
 const DBM = new DBManager();

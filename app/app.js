@@ -53,8 +53,16 @@ app.get("/", (req, res)=>{
     res.render("../views/main.ejs");
 });
 
-app.get("/admin", redirectLogin, (req, res)=>{
-    res.render("../views/admin.ejs");
+app.use("/photos", express.static("./photos"));
+
+app.get("/admin", redirectLogin, async (req, res)=>{
+
+    user = await DBM. getPublicUserDataById(req.session.userId);
+    let data = {
+        firstName: user.FirstName,
+        lastName: user.LastName
+    };
+    res.render("../views/admin.ejs", {data: data});
 });
 
 app.get("/user", redirectLogin, (req, res)=>{

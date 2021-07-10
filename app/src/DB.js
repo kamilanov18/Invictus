@@ -267,6 +267,24 @@ class DBManager {
     }
 
     /**
+    * Gets all users
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async getAllUsers() {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .query("SELECT * FROM Users")
+            Log.logInfo("getAllUsers");
+            return results.recordset;
+        } catch(err) {
+            Log.logError("getAllUsers",err);
+        }
+    }
+
+    /**
     * Updates the specified user
     * @param {number} userId - Id of the user to be updated
     * @param {user} newUser - User object with the new properties
@@ -376,6 +394,24 @@ class DBManager {
     }
 
     /**
+     * Gets all team data
+    * @author Kristian Milanov
+    * @returns {array}
+    */
+    async getAllTeams() {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .query("SELECT Title, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Teams");
+            Log.logInfo("getAllTeams");
+            return results.recordset;
+        } catch(err) {
+            Log.logError("getAllTeams",err);
+        }
+    }
+
+    /**
     * Updates the specified team
     * @param {number} teamId - Team's id
     * @param {string} newTitle - new team's data
@@ -477,6 +513,24 @@ class DBManager {
             return results.recordset[0];
         } catch(err) {
             Log.logError("getTaskById",err);
+        }
+    }
+
+    /**
+     * Gets all tasks
+    * @author Kristian Milanov
+    * @returns {array}
+    */
+    async getAllTasks() {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .query("SELECT ProjectId, AsigneeId, Title, Description, Status, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Tasks")
+            Log.logInfo("getAllTasks");
+            return results.recordset;
+        } catch(err) {
+            Log.logError("getAllTasks",err);
         }
     }
 
@@ -597,6 +651,24 @@ class DBManager {
     }
 
     /**
+    * Gets all worklogs
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async getAllWorklogs() {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .query("SELECT TaskId, Time, CreatorId, Date FROM Worklogs")
+            Log.logInfo("getAllWorklogs");
+            return results.recordset;
+        } catch(err) {
+            Log.logError("getAllWorklogs",err);
+        }
+    }
+
+    /**
     * @param {number} worklogId - Id of the worklog to be updated
     * @param {worklog} newWorklog - Hold new worklog info
     * @param {number} updaterId - Id of the user which updated this data type
@@ -701,6 +773,24 @@ class DBManager {
             return results.recordsets[0];
         } catch(err) {
             Log.logError("getProjectById",err);
+        }
+    }
+
+    /**
+    * Gets all projects
+    * @author Kristian Milanov
+    * @returns {array}
+    */
+    async getAllProjects() {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .query("SELECT Title, Description, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Projects")
+            Log.logInfo("getAllProjects");
+            return results.recordset;
+        } catch(err) {
+            Log.logError("getAllProjects",err);
         }
     }
 

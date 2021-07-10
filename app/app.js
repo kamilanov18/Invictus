@@ -54,13 +54,19 @@ app.get("/", (req, res)=>{
 });
 
 app.use("/photos", express.static("./photos"));
+app.use("/styles", express.static("./styles"));
 
 app.get("/admin", redirectLogin, async (req, res)=>{
 
     user = await DBM. getPublicUserDataById(req.session.userId);
     let data = {
         firstName: user.FirstName,
-        lastName: user.LastName
+        lastName: user.LastName,
+        projects: await DBM.getAllProjects(),
+        users: await DBM.getAllUsers(),
+        tasks: await DBM.getAllTasks(),
+        worklogs: await DBM.getAllWorklogs(),
+        teams: await DBM.getAllTeams()
     };
     res.render("../views/admin.ejs", {data: data});
 });

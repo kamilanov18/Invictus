@@ -7,28 +7,172 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poiret+One&display=swap" rel="stylesheet">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 </head>
 
 <body>
-    <nav class="navbar" role="navigation" aria-label="main navigation">
+
+    <nav class="navbar is-mobile" id="navBar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-            <a class="navbar-item" href="https://bulma.io">
-                <img src="/photos/logo.png"
-                    alt="Bulma: Free, open source, and modern CSS framework based on Flexbox" width="112" height="28">
+            <a class="navbar-item" href="/">
+                <img src="/photos/logo.png" alt="Bulma: Free, open source, and modern CSS framework based on Flexbox"
+                    width="112" height="28">
             </a>
         </div>
-        
-    </nav>
+        <div class="navbar-item">a</div>
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <form method="post" action="/logout"><button class="button is-warning is-outlined">Logout</button>
+                </form>
+            </div>
+        </div>
 
     </nav>
-    <div class="columns is-centered">
-        <div class="column is-narrow">
-            <p class="title">
+    <hr id="navBarHr" class="is-mobile">
+
+<section class="section dashboard">
+<div class="box">
+    <div class="columns is-multiline is-centered ">
+        <div class="column is-full is-mobile"></div>
+        <div class="column is-narrow is-mobile">
+            <hr class="titleHr">
+            <p id="wb" class="title is-1 has-text-centered is-mobile">
                 Welcome back, <%= data.firstName %>
                     <%= data.lastName %>
             </p>
+            <p class="subtitle has-text-centered is-mobile">To invictus, lets get you caught up, shall we?</p>
+            <hr class="titleHr is-mobile">
         </div>
     </div>
+
+    <div class="level">
+        <div class="level-item has-text-centered">
+            <p class="title is-1 has-text-centered pan-item">
+                <span class="icon">
+                    <span class="icon has-text-info is-medium">
+                        <i class="fas fa-project-diagram"></i>
+                    </span>
+                </span>
+                  <span>Projects: <span class="counter"><%= data.projects.length %></span></span>
+            </p>
+        </div>
+        <div class="level-item has-text-centered">
+            <p class="title is-1 has-text-centered pan-item">
+                <span class="icon">
+                    <span class="icon has-text-info is-medium">
+                        <i class="fas fa-tasks"></i>
+                    </span>
+                </span>
+                  <span>Tasks: <span class="counter"><%= data.tasks.length %></span></span>
+            </p>
+        </div>
+    </div>
+
+    <div class="level "></div>
+
+    <div class="level">
+        <div class="level-item has-text-centered">
+            <p class="title is-1 has-text-centered pan-item">
+                <span class="icon">
+                    <span class="icon has-text-info is-medium">
+                        <i class="fas fa-user"></i>
+                    </span>
+                </span>
+                  <span>Users: <span class="counter"><%= data.users.length %></span></span>
+            </p>
+        </div>
+        <div class="level-item has-text-centered">
+            <p class="title is-1 has-text-centered pan-item">
+                <span class="icon">
+                    <span class="icon has-text-info is-medium">
+                        <i class="fas fa-users"></i>
+                    </span>
+                </span>
+                  <span>Teams: <span class="counter"><%= data.teams.length %></span></span>
+            </p>
+        </div>
+    </div>
+
+    <div class="level "></div>
+
+    <div class="level ">
+        <div class="level-item has-text-centered">
+            <p class="title is-1 has-text-centered pan-item">
+                <span class="icon">
+                    <span class="icon has-text-info is-medium">
+                        <i class="far fa-clock"></i>
+                    </span>
+                </span>
+                  <span>Worklogs: <span class="counter"><%= data.worklogs.length %></span></span>
+            </p>
+        </div>
+    </div>
+</div>
+</section>
+
+<section id="projects" class="section ">
+<div class="box">
+    <div class="columns is-multiline is-centered">
+        <div class="column is-full">
+            <p class="pan-title title is-1 has-text-centered">Projects</p>
+        </div>
+        <div class="column is-half">
+            <hr class="titleHr">
+        </div>
+    </div>
+    <div class="columns is-multiline is-centered ">
+        <% for(const obj of data.projects) {%>
+            <div class="column is-one-quarter project is-centered pan">
+                <div class="notification is-info"><p class="title has-text-centered"><%= obj.Title%></p></div>
+            </div>
+        <% } %>
+    </div>
+</div>
+</section>
+
+<section id="projects" class="section ">
+    <div class="box">
+        <div class="columns">
+            <div class="column">
+                <p class="pan-title title is-1 has-text-centered">Tasks</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="projects" class="section ">
+    <div class="box">
+        <div class="columns">
+            <div class="column">
+                <p class="pan-title title is-1 has-text-centered">Worklogs</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="projects" class="section ">
+    <div class="box">
+        <div class="columns">
+            <div class="column">
+                <p class="pan-title title is-1 has-text-centered">Teams</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="projects" class="section ">
+    <div class="box">
+        <div class="columns">
+            <div class="column">
+                <p class="pan-title title is-1 has-text-centered">Users</p>
+            </div>
+        </div>
+    </div>
+</section>
 </body>
 
 </html>

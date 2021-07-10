@@ -1,0 +1,72 @@
+body {
+    background-color: #f5f5f5
+    /*
+    background-image: url("/photos/mountain.jpg");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-color: #464646;*/
+}
+
+#navBarHr {
+    background-color:wheat; 
+    height: 2px; 
+    margin:0
+}
+
+#navBar {
+    background-color: #627e9a;
+}
+
+.titleHr {
+    height:4px;
+    background-color: wheat;
+}
+
+#wb, .pan-item, .pan-title {
+
+    font-family: 'Poiret One', cursive;
+
+}
+
+.pan-item {
+
+}
+
+.pan-title {
+
+}
+
+.counter {
+    color:green;
+}
+
+.dashboard {
+    
+}
+
+#projects {
+   
+}
+
+.box  {
+    border: 3px solid wheat
+}
+
+.pan-hr {
+    color:wheat;
+}
+
+.project {
+    
+}
+
+.pan :hover {
+    background-color: #327ab6;
+    cursor: pointer;
+}
+
+.icon {
+    padding-right:7%;
+}

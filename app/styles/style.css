@@ -10,7 +10,7 @@ body {
 }
 
 #navBarHr {
-    background-color:wheat; 
+    background-color:rgb(64, 76, 184); 
     height: 2px; 
     margin:0
 }
@@ -21,12 +21,12 @@ body {
 
 .titleHr {
     height:4px;
-    background-color: wheat;
+    background-color: rgb(64, 76, 184); 
 }
 
 #wb, .pan-item, .pan-title {
 
-    font-family: 'Poiret One', cursive;
+    /*font-family: 'Poiret One', cursive;*/
 
 }
 
@@ -39,7 +39,7 @@ body {
 }
 
 .counter {
-    color:green;
+    color:white;
 }
 
 .dashboard {
@@ -51,16 +51,32 @@ body {
 }
 
 .box  {
-    border: 3px solid wheat
+    border: 3px solid rgb(64, 76, 184); 
+    border-radius: 12px;
+}
+
+.pan-stat {
+    border-color: rgb(64, 76, 184); 
+    background-color: #3e8ed0;
+}
+
+.pan {
+    
 }
 
 .pan-hr {
-    color:wheat;
+    color:rgb(64, 76, 184); 
 }
 
-.project {
-    
+#dashboard-2 {
+    margin-right:1.5%;
+    margin-left:1.5%;
 }
+
+.projects-details {
+    position: fixed
+}
+
 
 .pan :hover {
     background-color: #327ab6;
@@ -68,5 +84,22 @@ body {
 }
 
 .icon {
-    padding-right:7%;
+    padding-right:13%;
+}
+
+#name {
+    color:rgb(110, 110, 110);
+}
+
+.section {
+
+    margin-bottom:-3%;
+}
+
+#projects {
+    margin-top:-1%;
+}
+
+#project-box {
+    background-color: #3e8ed0;
 }

@@ -34,85 +34,83 @@
     </nav>
     <hr id="navBarHr" class="is-mobile">
 
-<section class="section dashboard">
-<div class="box">
     <div class="columns is-multiline is-centered ">
         <div class="column is-full is-mobile"></div>
         <div class="column is-narrow is-mobile">
-            <hr class="titleHr">
+            <!--<hr class="titleHr">-->
             <p id="wb" class="title is-1 has-text-centered is-mobile">
-                Welcome back, <%= data.firstName %>
-                    <%= data.lastName %>
+                <span id="name">Welcome back</span> <b><%= data.firstName %> <%= data.lastName %></b>
             </p>
             <p class="subtitle has-text-centered is-mobile">To invictus, lets get you caught up, shall we?</p>
-            <hr class="titleHr is-mobile">
+            <!--<hr class="titleHr is-mobile">-->
         </div>
     </div>
 
-    <div class="level">
-        <div class="level-item has-text-centered">
-            <p class="title is-1 has-text-centered pan-item">
-                <span class="icon">
-                    <span class="icon has-text-info is-medium">
-                        <i class="fas fa-project-diagram"></i>
+<div class="level"></div>
+
+<div class="columns is-4" id="dashboard-2">
+    <div class="column ">
+        <div class="box pan-stat ">
+            <p class="title is-3 has-text-centered pan-item">
+                <span class="icon ">
+                    <span class="icon has-text-light is-small">
+                        <i class="fas fa-project-diagram "></i>
                     </span>
                 </span>
-                  <span>Projects: <span class="counter"><%= data.projects.length %></span></span>
-            </p>
-        </div>
-        <div class="level-item has-text-centered">
-            <p class="title is-1 has-text-centered pan-item">
-                <span class="icon">
-                    <span class="icon has-text-info is-medium">
-                        <i class="fas fa-tasks"></i>
-                    </span>
-                </span>
-                  <span>Tasks: <span class="counter"><%= data.tasks.length %></span></span>
+                  <span class="has-text-light">Projects: <span class="counter"><%= data.projects.length %></span></span>
             </p>
         </div>
     </div>
-
-    <div class="level "></div>
-
-    <div class="level">
-        <div class="level-item has-text-centered">
-            <p class="title is-1 has-text-centered pan-item">
-                <span class="icon">
-                    <span class="icon has-text-info is-medium">
-                        <i class="fas fa-user"></i>
-                    </span>
-                </span>
-                  <span>Users: <span class="counter"><%= data.users.length %></span></span>
-            </p>
-        </div>
-        <div class="level-item has-text-centered">
-            <p class="title is-1 has-text-centered pan-item">
-                <span class="icon">
-                    <span class="icon has-text-info is-medium">
+    <div class="column">
+        <div class="box pan-stat">
+            <p class="title is-3 has-text-centered pan-item">
+                <span class="icon ">
+                    <span class="icon has-text-light is-small">
                         <i class="fas fa-users"></i>
                     </span>
                 </span>
-                  <span>Teams: <span class="counter"><%= data.teams.length %></span></span>
+                  <span class="has-text-light">Teams: <span class="counter"><%= data.teams.length %></span></span>
             </p>
         </div>
     </div>
-
-    <div class="level "></div>
-
-    <div class="level ">
-        <div class="level-item has-text-centered">
-            <p class="title is-1 has-text-centered pan-item">
-                <span class="icon">
-                    <span class="icon has-text-info is-medium">
+    <div class="column">
+        <div class="box pan-stat">
+            <p class="title is-3 has-text-centered pan-item">
+                <span class="icon ">
+                    <span class="icon has-text-light is-small">
+                        <i class="fas fa-user"></i>
+                    </span>
+                </span>
+                  <span class="has-text-light">Users: <span class="counter"><%= data.users.length %></span></span>
+            </p>
+        </div>
+    </div>
+    <div class="column">
+        <div class="box pan-stat">
+            <p class="title is-3 has-text-centered pan-item">
+                <span class="icon ">
+                    <span class="icon has-text-light is-small">
+                        <i class="fas fa-tasks"></i>
+                    </span>
+                </span>
+                  <span class="has-text-light">Tasks: <span class="counter"><%= data.tasks.length %></span></span>
+            </p>
+        </div>
+    </div>
+    <div class="column">
+        <div class="box pan-stat">
+            <p class="title is-3 has-text-centered pan-item">
+                <span class="icon ">
+                    <span class="icon has-text-light is-small">
                         <i class="far fa-clock"></i>
                     </span>
                 </span>
-                  <span>Worklogs: <span class="counter"><%= data.worklogs.length %></span></span>
+                  <span class="has-text-light">Worklogs: <span class="counter"><%= data.worklogs.length %></span></span>
             </p>
         </div>
     </div>
 </div>
-</section>
+
 
 <section id="projects" class="section ">
 <div class="box">
@@ -120,21 +118,19 @@
         <div class="column is-full">
             <p class="pan-title title is-1 has-text-centered">Projects</p>
         </div>
-        <div class="column is-half">
-            <hr class="titleHr">
-        </div>
+
     </div>
     <div class="columns is-multiline is-centered ">
         <% for(const obj of data.projects) {%>
             <div class="column is-one-quarter project is-centered pan">
-                <div class="notification is-info"><p class="title has-text-centered"><%= obj.Title%></p></div>
+                <div class="box" id="project-box"><p class="title has-text-centered has-text-light"><%= obj.Title%></p></div>
             </div>
         <% } %>
     </div>
 </div>
 </section>
 
-<section id="projects" class="section ">
+<section id="projects" class="section" id="projects-pan">
     <div class="box">
         <div class="columns">
             <div class="column">
@@ -173,6 +169,21 @@
         </div>
     </div>
 </section>
+
+<!--<section id="projects-details">
+
+    <div class="modal is-active">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                ayy
+            </div>
+        </div>
+        <button class="modal-close is-large" aria-label="close">AAAAAAAAAAAA</button>
+      </div>
+
+</section>-->
+
 </body>
 
 </html>

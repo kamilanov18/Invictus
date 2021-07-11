@@ -12,6 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poiret+One&display=swap" rel="stylesheet">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -39,151 +40,494 @@
         <div class="column is-narrow is-mobile">
             <!--<hr class="titleHr">-->
             <p id="wb" class="title is-1 has-text-centered is-mobile">
-                <span id="name">Welcome back</span> <b><%= data.firstName %> <%= data.lastName %></b>
+                <span id="name">Welcome back</span> <b>
+                    <%= data.firstName %>
+                        <%= data.lastName %>
+                </b>
             </p>
             <p class="subtitle has-text-centered is-mobile">To invictus, lets get you caught up, shall we?</p>
             <!--<hr class="titleHr is-mobile">-->
         </div>
     </div>
 
-<div class="level"></div>
+    <div class="level"></div>
 
-<div class="columns is-4" id="dashboard-2">
-    <div class="column ">
-        <div class="box pan-stat ">
-            <p class="title is-3 has-text-centered pan-item">
-                <span class="icon ">
-                    <span class="icon has-text-light is-small">
-                        <i class="fas fa-project-diagram "></i>
-                    </span>
-                </span>
-                  <span class="has-text-light">Projects: <span class="counter"><%= data.projects.length %></span></span>
-            </p>
+    <div class="columns is-4" id="dashboard-2">
+        <div class="column ">
+            <a href="#title-projects">
+                <div class="box pan-stat ">
+                    <p class="title is-3 has-text-centered pan-item">
+                        <span class="icon ">
+                            <span class="icon has-text-light is-small">
+                                <i class="fas fa-project-diagram "></i>
+                            </span>
+                        </span>
+                        <span class="has-text-light">Projects: <span class="counter">
+                                <%= data.projects.length %>
+                            </span></span>
+                    </p>
+                </div>
+            </a>
+        </div>
+        <div class="column">
+            <a href="#title-teams">
+                <div class="box pan-stat">
+                    <p class="title is-3 has-text-centered pan-item">
+                        <span class="icon ">
+                            <span class="icon has-text-light is-small">
+                                <i class="fas fa-users"></i>
+                            </span>
+                        </span>
+                        <span class="has-text-light">Teams: <span class="counter">
+                                <%= data.teams.length %>
+                            </span></span>
+                    </p>
+                </div>
+            </a>
+        </div>
+        <div class="column">
+            <a href="#title-users">
+                <div class="box pan-stat">
+                    <p class="title is-3 has-text-centered pan-item">
+                        <span class="icon ">
+                            <span class="icon has-text-light is-small">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </span>
+                        <span class="has-text-light">Users: <span class="counter">
+                                <%= data.users.length %>
+                            </span></span>
+                    </p>
+                </div>
+            </a>
+        </div>
+        <div class="column">
+            <a href="#title-tasks">
+                <div class="box pan-stat">
+                    <p class="title is-3 has-text-centered pan-item">
+                        <span class="icon ">
+                            <span class="icon has-text-light is-small">
+                                <i class="fas fa-tasks"></i>
+                            </span>
+                        </span>
+                        <span class="has-text-light">Tasks: <span class="counter">
+                                <%= data.tasks.length %>
+                            </span></span>
+                    </p>
+                </div>
+            </a>
+        </div>
+        <div class="column">
+            <a href="#title-worklogs">
+                <div class="box pan-stat">
+                    <p class="title is-3 has-text-centered pan-item">
+                        <span class="icon ">
+                            <span class="icon has-text-light is-small">
+                                <i class="far fa-clock"></i>
+                            </span>
+                        </span>
+                        <span class="has-text-light">Worklogs: <span class="counter">
+                                <%= data.worklogs.length %>
+                            </span></span>
+                    </p>
+                </div>
+            </a>
         </div>
     </div>
-    <div class="column">
-        <div class="box pan-stat">
-            <p class="title is-3 has-text-centered pan-item">
-                <span class="icon ">
-                    <span class="icon has-text-light is-small">
-                        <i class="fas fa-users"></i>
-                    </span>
-                </span>
-                  <span class="has-text-light">Teams: <span class="counter"><%= data.teams.length %></span></span>
-            </p>
-        </div>
-    </div>
-    <div class="column">
-        <div class="box pan-stat">
-            <p class="title is-3 has-text-centered pan-item">
-                <span class="icon ">
-                    <span class="icon has-text-light is-small">
-                        <i class="fas fa-user"></i>
-                    </span>
-                </span>
-                  <span class="has-text-light">Users: <span class="counter"><%= data.users.length %></span></span>
-            </p>
-        </div>
-    </div>
-    <div class="column">
-        <div class="box pan-stat">
-            <p class="title is-3 has-text-centered pan-item">
-                <span class="icon ">
-                    <span class="icon has-text-light is-small">
-                        <i class="fas fa-tasks"></i>
-                    </span>
-                </span>
-                  <span class="has-text-light">Tasks: <span class="counter"><%= data.tasks.length %></span></span>
-            </p>
-        </div>
-    </div>
-    <div class="column">
-        <div class="box pan-stat">
-            <p class="title is-3 has-text-centered pan-item">
-                <span class="icon ">
-                    <span class="icon has-text-light is-small">
-                        <i class="far fa-clock"></i>
-                    </span>
-                </span>
-                  <span class="has-text-light">Worklogs: <span class="counter"><%= data.worklogs.length %></span></span>
-            </p>
-        </div>
-    </div>
-</div>
 
 
-<section id="projects" class="section ">
-<div class="box">
-    <div class="columns is-multiline is-centered">
-        <div class="column is-full">
-            <p class="pan-title title is-1 has-text-centered">Projects</p>
-        </div>
+    <section id="projects" class="section ">
+        <div class="box ">
+            <div class="columns is-multiline has-text-centered">
+                <div class="column is-full has-text-centered">
+                    <p class="pan-title title is-1 has-text-centered is-inline" id="title-projects">Projects</p> 
+                    <button class="button is-success add-btn" onclick="createProject()">
+                        <span class="icon is-small">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <span>Add</span>
+                    </button>
+                </div>
 
-    </div>
-    <div class="columns is-multiline is-centered ">
-        <% for(const obj of data.projects) {%>
-            <div class="column is-one-quarter project is-centered pan">
-                <div class="box" id="project-box"><p class="title has-text-centered has-text-light"><%= obj.Title%></p></div>
+
             </div>
-        <% } %>
-    </div>
-</div>
-</section>
-
-<section id="projects" class="section" id="projects-pan">
-    <div class="box">
-        <div class="columns">
-            <div class="column">
-                <p class="pan-title title is-1 has-text-centered">Tasks</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section id="projects" class="section ">
-    <div class="box">
-        <div class="columns">
-            <div class="column">
-                <p class="pan-title title is-1 has-text-centered">Worklogs</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section id="projects" class="section ">
-    <div class="box">
-        <div class="columns">
-            <div class="column">
-                <p class="pan-title title is-1 has-text-centered">Teams</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section id="projects" class="section ">
-    <div class="box">
-        <div class="columns">
-            <div class="column">
-                <p class="pan-title title is-1 has-text-centered">Users</p>
+            <div class="columns is-multiline is-centered ">
+                <% let item=0 %>
+                    <% for(const obj of data.projects) {%>
+                        <div class="column is-one-quarter project is-centered pan" onclick="openProject(this.id); selectedItem=this.id"
+                            id="<%= item %>">
+                            <div class="box project-box">
+                                <p class="title has-text-centered has-text-light">
+                                    <%= obj.Title%>
+                                </p>
+                            </div>
+                        </div>
+                        <% item++ %>
+                    <% } %>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!--<section id="projects-details">
+    <section id="projects" class="section" id="projects-pan">
+        <div class="box">
+            <div class="columns">
+                <div class="column">
+                    <p class="pan-title title is-1 has-text-centered " id="title-tasks">Tasks</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <div class="modal is-active">
+    <section id="projects" class="section ">
+        <div class="box">
+            <div class="columns">
+                <div class="column">
+                    <p class="pan-title title is-1 has-text-centered" id="title-worklogs">Worklogs</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="section ">
+        <div class="box">
+            <div class="columns">
+                <div class="column">
+                    <p class="pan-title title is-1 has-text-centered" id="title-teams">Teams</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="section ">
+        <div class="box">
+            <div class="columns">
+                <div class="column">
+                    <p class="pan-title title is-1 has-text-centered" id="title-users">Users</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<section>
+    <div class="modal" id="project-modal">
         <div class="modal-background"></div>
         <div class="modal-content">
             <div class="box">
-                ayy
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick='$("#project-modal").removeClass("is-active");'>X</button>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column has-text-centered">
+                        <form method="delete" id="delete-project" action="/delete-project">
+                            <button id="deleteButton" class="button is-danger is-outlined">
+                                <span class="icon is-small">
+                                    <i class="fas fa-times"></i>
+                                </span>
+                                <span>Delete</span>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="column">
+                        <p class="title has-text-centered" id="project-modal-title">testTitle</p>
+                    </div>
+                    <div class="column has-text-centered">
+                        <button class="button is-link is-outlined" onclick="$('#project-modal').removeClass('is-active'); editProject();">
+                            <span class="icon is-small">
+                                <i class="fas fa-pencil-alt"></i>
+                            </span>
+                            <span>Edit</span>
+                        </button>
+                    </div>
+                </div>
+                <p class="subtitle has-text-centered" id="project-modal-description">testDescription</p>
+                <p class="subtitle has-text-centered"><b>Created on:</b> <span id="project-modal-date-of-creation">testDate</span></p>
+                <p class="subtitle has-text-centered"><b>Created by:</b> <span id="project-modal-creator"></span></p>
+                <p class="subtitle has-text-centered"><b>Last updated on:</b> <span id="project-modal-last-update-date"></span></p>
+                <p class="subtitle has-text-centered"><b>Last changed by:</b> <span id="project-modal-last-update-user"></span></p>
+                <p class="subtitle has-text-centered"><b>Teams assigned to this project:</b> <span id="project-modal-teams"></span>
             </div>
         </div>
-        <button class="modal-close is-large" aria-label="close">AAAAAAAAAAAA</button>
-      </div>
+    </div>
+</section>
 
-</section>-->
+<section>
+    <form method="post" action="/create-project">
+    <div class="modal" id="project-modal-create">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick='$("#project-modal-create").removeClass("is-active");'>X</button>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column">
+                        <p class="title has-text-centered">Create new project</p>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column"></div>
+                </div>
+                <div class="columns is-centered">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                          <label class="label">Title: </label>
+                        </div>
+                        <div class="field-body">
+                          <div class="field">
+                            <p class="control">
+                              <input class="input" id="project-create-title" type="text" placeholder="Project title">
+                            </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="columns"><div class="column"></div></div>
+                <div class="columns is-centered">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                          <label class="label">Description: </label>
+                        </div>
+                        <div class="field-body">
+                          <div class="field">
+                            <p class="control">
+                              <input class="input" id="project-create-description" type="text" placeholder="Project description">
+                            </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="columns"><div class="column"></div></div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <button class="button is-success" id="project-create-btn">
+                            <span class="icon is-small">
+                              <i class="fas fa-check"></i>
+                            </span>
+                            <span>Save</span>
+                          </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+</section>
+
+<section>
+        <div class="modal" id="project-modal-edit">
+            <div class="modal-background"></div>
+            <div class="modal-content">
+                <div class="box">
+                    <div class="columns">
+                        <div class="column">
+                            <button class="button" onclick='$("#project-modal-edit").removeClass("is-active"); $("#project-modal").addClass("is-active");'>Back</button>
+                        </div>
+                    </div>
+                    <div class="columns">
+                        <div class="column"><p class="title has-text-centered">Edit project</p></div>
+                    </div>
+                    <div class="columns">
+                        <div class="column"></div>
+                    </div>
+                    <div class="columns is-centered">
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                              <label class="label">Title: </label>
+                            </div>
+                            <div class="field-body">
+                              <div class="field">
+                                <p class="control">
+                                  <input class="input" id="project-edit-title" type="text" placeholder="Project title">
+                                </p>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="columns"><div class="column"></div></div>
+                    <div class="columns is-centered">
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                              <label class="label">Description: </label>
+                            </div>
+                            <div class="field-body">
+                              <div class="field">
+                                <p class="control">
+                                  <input class="input" id="project-edit-description" type="text" placeholder="Project description">
+                                </p>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="columns is-centered is-flex">
+                        <div class="column is-centered is-vcentered">
+                            <p class="title is-horizontal is-5 has-text-centered">
+                                <button class="button is-link is-outlined has-text-centered" onclick="$('#project-modal-edit').removeClass('is-active'); $('#project-modal-edit-teams').addClass('is-active')">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </span>
+                                  </button>
+                                <b>Teams assigned to this project: </b>
+                                <span id="project-edit-teams"></span> </p>
+                        </div>
+                    </div>
+                    <div class="columns"><div class="column"></div></div>
+                    <div class="columns has-text-centered">
+                        <div class="column">
+                            <button class="button is-success is-outlined" id="project-create-btn">
+                                <span class="icon is-small">
+                                  <i class="fas fa-check"></i>
+                                </span>
+                                <span>Save</span>
+                              </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>
+
+<section>
+    <div class="modal" id="project-modal-edit-teams">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick="$('#project-modal-edit-teams').removeClass('is-active'); $('#project-modal-edit').addClass('is-active');">Back</button>
+                    </div>
+                </div>
+                <div class="columns is-centered">
+                    <p class="title has-text-centered">Assign teams to project</p>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered">
+                    <button class="button is-success is-outlined" id="project-create-btn">
+                        <span class="icon is-small">
+                          <i class="fas fa-check"></i>
+                        </span>
+                        <span>Save</span>
+                      </button>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-multiline is-centered">
+                    <% item = 0; %>
+                    <% for(const obj of data.teams) { %>
+                        <div class="column is-one-quarter project is-centered pan" onclick="selectedItem=this.id.substring(4,this.id.length); $('#pte-'+selectedItem).toggleClass('selected-item') "
+                            id="pte-<%= item %>">
+                            <div class="box project-box">
+                                <p class="title has-text-centered has-text-light">
+                                    <%= obj.Title%>
+                                </p>
+                            </div>
+                        </div>
+                    <% item++; %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 </body>
+<script>
+    var selectedItem;
+
+    let projects = <%- JSON.stringify(data.projects) %>;
+    let users = <%- JSON.stringify(data.users) %>;
+    let tasks = <%- JSON.stringify(data.tasks) %>;
+    let teams = <%- JSON.stringify(data.teams) %>;
+    let worklogs = <%- JSON.stringify(data.worklogs) %>;
+
+    async function openProject(id) {
+        $("#project-modal").addClass("is-active");
+        $("#project-modal-title").html(projects[id].Title);
+        $("#project-modal-description").html(projects[id].Description);
+        $("#project-modal-date-of-creation").html(projects[id].DateOfCreation.substring(0, 10));
+        $("#project-modal-last-update-date").html(projects[id].DateOfLastChange.substring(0, 10));
+
+        const { CreatorId, LatestChangeUserId, Id } = projects.filter(project => project.Id === projects[id].Id)[0];
+        let {FirstName, LastName } = users.filter(user => user.Id === CreatorId)[0];
+        $("#project-modal-creator").html(FirstName+" "+LastName);
+
+        let user = users.filter(user => user.Id === LatestChangeUserId)[0];
+        $("#project-modal-last-update-user").html(user.FirstName+" "+user.LastName);
+
+        const results = await fetch(`/get-users-teams/${Id}`, {method: "GET"});
+        let obj = await results.json();
+
+        console.log(obj);
+
+        let str="";
+
+        for(const item of obj) {
+            str+=item.Title+", ";
+        }
+        str=str.substring(0,str.length-2);
+        $("#project-modal-teams").html(str);
+    }
+
+    function createProject() {
+        $("#project-modal-create").addClass("is-active");
+    }
+
+    async function editProject() {
+        $("#project-modal-create").removeClass("is-active");
+        $("#project-modal-edit").addClass("is-active");
+        $("#project-edit-title").val(projects[selectedItem].Title);
+        $("#project-edit-description").val(projects[selectedItem].Description);
+
+        const { Id } = projects.filter(project => project.Id === projects[selectedItem].Id)[0];
+
+        const results = await fetch(`/get-users-teams/${Id}`, {method: "GET"});
+        let obj = await results.json();
+
+        console.log(obj);
+
+        let str="";
+
+        for(const item of obj) {
+            str+=item.Title+", ";
+        }
+        str=str.substring(0,str.length-2);
+
+        $("#project-edit-teams").html(str);
+    }
+
+    function submitProject() {
+        const title = $("#iproject-create-title").val();
+        
+        $("#project-create-btn")
+    }
+
+    const deleteProject = $("#delete-project");
+    const delButton = document.querySelector("#deleteButton");
+    console.log(delButton);
+    delButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        const title = $("#project-modal-title").html();
+        const { Id } = projects.filter(project => project.Title === title)[0];
+        console.log(`/delete-project/${Id}`);
+        fetch(`/delete-project/${Id}`, { method: "POST" });
+        location.reload();
+    });
+
+    const prjCrtBtn = document.querySelector("#project-create-btn");
+    const prjCrtTitle = $("#project-create-title");
+    const prjCrtDescription = $("#project-create-description");
+    prjCrtBtn.addEventListener("click",e=>{
+        e.preventDefault();
+        const title = prjCrtTitle.val()
+        const description = prjCrtDescription.val();
+
+        fetch(`/create-project/${title}/${description}`, { method: "POST"});
+        location.reload();
+    });
+
+    
+</script>
 
 </html>

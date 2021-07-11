@@ -1,12 +1,7 @@
 body {
-    background-color: #f5f5f5
-    /*
-    background-image: url("/photos/mountain.jpg");
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-color: #464646;*/
+    background-color: #f5f5f5;
+    overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 #navBarHr {
@@ -24,30 +19,8 @@ body {
     background-color: rgb(64, 76, 184); 
 }
 
-#wb, .pan-item, .pan-title {
-
-    /*font-family: 'Poiret One', cursive;*/
-
-}
-
-.pan-item {
-
-}
-
-.pan-title {
-
-}
-
 .counter {
     color:white;
-}
-
-.dashboard {
-    
-}
-
-#projects {
-   
 }
 
 .box  {
@@ -60,10 +33,6 @@ body {
     background-color: #3e8ed0;
 }
 
-.pan {
-    
-}
-
 .pan-hr {
     color:rgb(64, 76, 184); 
 }
@@ -73,12 +42,8 @@ body {
     margin-left:1.5%;
 }
 
-.projects-details {
-    position: fixed
-}
 
-
-.pan :hover {
+.project-box :hover {
     background-color: #327ab6;
     cursor: pointer;
 }
@@ -100,6 +65,15 @@ body {
     margin-top:-1%;
 }
 
-#project-box {
+.project-box {
     background-color: #3e8ed0;
+}
+
+.add-btn {
+    margin-top:0.7%;
+    margin-left:1%;
+}
+
+.selected-item {
+    background-color: rgb(48, 184, 48);
 }

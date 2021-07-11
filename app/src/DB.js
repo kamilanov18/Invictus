@@ -394,6 +394,34 @@ class DBManager {
     }
 
     /**
+    * @param {number} projectId
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async getAllTeamsByProject(projectId) {
+        try {
+            const pool = await this.#pool;
+    
+            Validations.validateNumericability(projectId);
+
+            const results = await pool.request()
+                .input("ProjectId",sql.Int,projectId)
+                .query(`
+                SELECT Teams.Title
+                FROM Teams
+                INNER JOIN TeamsProjects
+                ON Teams.Id = TeamsProjects.TeamId
+                WHERE ProjectId = @ProjectId
+                `);
+
+            Log.logInfo("getAllTeamsByProject");
+            return results.recordset;
+        } catch(err) {
+            Log.logError("getAllTeamsByProject",err);
+        }
+    }
+
+    /**
      * Gets all team data
     * @author Kristian Milanov
     * @returns {array}
@@ -786,7 +814,7 @@ class DBManager {
             const pool = await this.#pool;
     
             const results = await pool.request()
-                .query("SELECT Title, Description, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Projects")
+                .query("SELECT Id, Title, Description, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Projects")
             Log.logInfo("getAllProjects");
             return results.recordset;
         } catch(err) {

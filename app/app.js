@@ -68,25 +68,16 @@ app.get("/admin", redirectLogin, async (req, res)=>{
         worklogs: await DBM.getAllWorklogs(),
         teams: await DBM.getAllTeams()
     };
-    res.render("../views/admin.ejs", {data: data});
+    res.render("../views/admin.ejs", { data });
 });
 
 app.get("/user", redirectLogin, (req, res)=>{
     res.render("../views/user.ejs");
 });
 
-app.get("/logout", (req,res)=>{
-    res.send(`
-    logout
-    <form method="post" action="/logout">
-    <button>Submit</button>
-    </form>
-    `);
-});
-
-app.get("*", (req,res)=>{
-    res.render("../views/main.ejs");
-});
+// app.get("*", (req,res)=>{
+//     res.render("../views/main.ejs");
+// });
 
 // End of views //
 
@@ -116,4 +107,27 @@ app.post("/logout", (req, res)=>{
         res.clearCookie(sessionConfig.name);
         res.redirect("/");
     });
+});
+
+// app.post("/delete-project", async (req,res)=>{
+//     const { id } = req.body;
+//     await DBM.deleteProject(id)
+//     res.redirect("/admin");
+// });
+
+app.post("/delete-project/:id", async(req,res) =>{
+    const { id } = req.params;
+    await DBM.deleteProject(id);
+});
+
+app.get("/get-users-teams/:id", async(req,res)=>{
+    const { id } = req.params;
+
+    const teams = await DBM.getAllTeamsByProject(id);
+    res.send(teams)
+});
+
+app.post("/create-project/:title/:description", async (req,res)=>{
+    const project = { title: req.params.title, description: req.params.description, creatorId: req.session.userId };
+    await DBM.createProject(project);
 });

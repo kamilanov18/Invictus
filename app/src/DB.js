@@ -1112,6 +1112,48 @@ class DBManager {
     }
 
     /**
+    * @param {number} teamId
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async getUsersInTeam(teamId) {
+        try {
+            const pool = await this.#pool;
+    
+            Validations.validateNumericability(teamId);
+
+            const results = await pool.request()
+                .input("TeamId",sql.Int,teamId)
+                .query("SELECT UserId FROM UsersTeams WHERE TeamId = @TeamId")
+            Log.logInfo("getUsersInTeam");
+            return results.recordset;
+        } catch(err) {
+            Log.logError("getUsersInTeam",err);
+        }
+    }
+
+    /**
+    * @param {number} userId
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async getUserById(userId) {
+        try {
+            const pool = await this.#pool;
+    
+            Validations.validateNumericability(userId);
+
+            const results = await pool.request()
+                .input("UserId",sql.Int,userId)
+                .query("SELECT * FROM Users WHERE Id = @UserId");
+            Log.logInfo("getUserById");
+            return results.recordsets[0];
+        } catch(err) {
+            Log.logError("getUserById",err);
+        }
+    }
+
+    /**
      * Checks if the user registered under this username and password exists in the DB and returns their Id if found and 0 if not.
     * @param {string} username
     * @param {string} password

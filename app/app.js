@@ -143,3 +143,14 @@ app.post("/update-project", async(req,res)=>{
 
     res.redirect("/admin");
 });
+
+app.get("/get-team-users/:teamId", async(req,res)=>{
+    const  teamId  = req.params.teamId;
+
+    const users = await DBM.getUsersInTeam(teamId);
+    let usersNames=[];
+    for(const user of users) {
+        usersNames.push(await DBM.getUserById(user.UserId));
+    }
+    res.send(usersNames);
+})

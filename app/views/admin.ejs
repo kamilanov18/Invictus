@@ -19,14 +19,14 @@
     <nav class="navbar is-mobile" id="navBar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="/">
-                <img src="/photos/logo.png" alt="Bulma: Free, open source, and modern CSS framework based on Flexbox"
+                <img src="/photos/logo_white.png" alt="Invictus"
                     width="112" height="28">
             </a>
         </div>
         
         <div class="navbar-end">
             <div class="navbar-item">
-                <form method="post" action="/logout"><button class="button is-warning is-outlined">Logout</button>
+                <form method="post" action="/logout"><button class="button is-white is-outlined">Logout</button>
                 </form>
             </div>
         </div>
@@ -147,8 +147,6 @@
                         <span>Add</span>
                     </button>
                 </div>
-
-
             </div>
             <div class="columns is-multiline is-centered ">
                 <% let item=0 %>
@@ -167,42 +165,92 @@
         </div>
     </section>
 
-    <section id="projects" class="section" id="projects-pan">
+    <section id="projects" class="section" id="tasks-pan">
         <div class="box">
-            <div class="columns">
-                <div class="column">
-                    <p class="pan-title title is-1 has-text-centered " id="title-tasks">Tasks</p>
+            <div class="columns is-multiline has-text-centered">
+                <div class="column is-full has-text-centered">
+                    <p class="pan-title title is-1 has-text-centered is-inline" id="title-tasks">Tasks</p>
+                    <button class="button is-success add-btn" onclick="createTask()">
+                        <span class="icon is-small">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <span>Add</span>
+                    </button>
                 </div>
+            </div>
+            <div class="columns is-multiline is-centered ">
+                <% item=0 %>
+                    <% for(const obj of data.tasks) {%>
+                        <div class="column is-one-quarter project is-centered pan" onclick="selectedProject=this.id; openTask(this.id.substring(3,this.id.length)); "
+                            id="ta-<%= item %>">
+                            <div class="box project-box">
+                                <p class="title has-text-centered has-text-light">
+                                    <%= obj.Title%>
+                                </p>
+                            </div>
+                        </div>
+                        <% item++ %>
+                    <% } %>
             </div>
         </div>
     </section>
 
     <section id="projects" class="section ">
         <div class="box">
-            <div class="columns">
-                <div class="column">
-                    <p class="pan-title title is-1 has-text-centered" id="title-worklogs">Worklogs</p>
+            <div class="columns is-multiline has-text-centered">
+                <div class="column is-full has-text-centered">
+                    <p class="pan-title title is-1 has-text-centered is-inline" id="title-teams">Teams</p>
+                    <button class="button is-success add-btn" onclick="createTeam()">
+                        <span class="icon is-small">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <span>Add</span>
+                    </button>
                 </div>
+            </div>
+            <div class="columns is-multiline is-centered ">
+                <% item=0 %>
+                    <% for(const obj of data.teams) {%>
+                        <div class="column is-one-quarter project is-centered pan" onclick="selectedTeam=this.id; openTeam(this.id.substring(3,this.id.length)); "
+                            id="te-<%= item %>">
+                            <div class="box project-box">
+                                <p class="title has-text-centered has-text-light">
+                                    <%= obj.Title%>
+                                </p>
+                            </div>
+                        </div>
+                        <% item++ %>
+                    <% } %>
             </div>
         </div>
     </section>
 
     <section id="projects" class="section ">
         <div class="box">
-            <div class="columns">
-                <div class="column">
-                    <p class="pan-title title is-1 has-text-centered" id="title-teams">Teams</p>
+            <div class="columns is-multiline has-text-centered">
+                <div class="column is-full has-text-centered">
+                    <p class="pan-title title is-1 has-text-centered is-inline" id="title-users">Users</p>
+                    <button class="button is-success add-btn" onclick="createUser()">
+                        <span class="icon is-small">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <span>Add</span>
+                    </button>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <section id="projects" class="section ">
-        <div class="box">
-            <div class="columns">
-                <div class="column">
-                    <p class="pan-title title is-1 has-text-centered" id="title-users">Users</p>
-                </div>
+            <div class="columns is-multiline is-centered ">
+                <% item=0 %>
+                    <% for(const obj of data.users) {%>
+                        <div class="column is-one-quarter project is-centered pan" onclick="selectedUser=this.id; openUser(this.id.substring(2,this.id.length)); "
+                            id="u-<%= item %>">
+                            <div class="box project-box">
+                                <p class="title has-text-centered has-text-light">
+                                    <%= obj.FirstName%> <%= obj.LastName %>
+                                </p>
+                            </div>
+                        </div>
+                        <% item++ %>
+                    <% } %>
             </div>
         </div>
     </section>
@@ -246,7 +294,7 @@
                 <p class="subtitle has-text-centered"><b>Last updated on:</b> <span id="project-modal-last-update-date"></span></p>
                 <p class="subtitle has-text-centered"><b>Last changed by:</b> <span id="project-modal-last-update-user"></span></p>
                 <p class="subtitle has-text-centered"><b>Teams assigned to this project:</b> <span id="project-modal-teams"></span>
-                    <p class="subtitle has-text-centered"><b>Tasks assigned to this project:</b> <span id="project-modal-tasks"></span>
+                <p class="subtitle has-text-centered"><b>Tasks assigned to this project:</b> <span id="project-modal-tasks"></span>
             </div>
         </div>
     </div>
@@ -493,9 +541,158 @@
     </div>
 </section>
 
+<section>
+    <div class="modal" id="task-modal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick="$('#task-modal').removeClass('is-active');">X</button>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns">
+                    <div class="column has-text-centered">
+                        <button id="delete-task" class="button is-danger is-outlined">
+                            <span class="icon is-small">
+                                <i class="fas fa-times"></i>
+                            </span>
+                            <span>Delete</span>
+                        </button>
+                    </div>
+                    <div class="column">
+                        <p class="title has-text-centered" id="task-modal-title">testTitle</p>
+                    </div>
+                    <div class="column has-text-centered">
+                        <button class="button is-link is-outlined" onclick="$('#task-modal').removeClass('is-active'); editTask();">
+                            <span class="icon is-small">
+                                <i class="fas fa-pencil-alt"></i>
+                            </span>
+                            <span>Edit</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="level"></div>
+                
+                    <p class="subtitle has-text-centered"><b>Belongs to project:</b> <span id="task-modal-project">testName</span></p>
+                    <p class="subtitle has-text-centered"><b>Asigned to:</b> <span id="task-modal-asignee">testUser</span></p>
+                    <p class="subtitle has-text-centered"><b>Description: </b><span id="task-modal-description"></span></p>
+                    <p class="subtitle has-text-centered"><b>Task status: </b><span id="task-modal-status"></span></p>
+                    <p class="subtitle has-text-centered"><b>Created on:</b> <span id="task-modal-date-of-creation">testDate</span></p>
+                    <p class="subtitle has-text-centered"><b>Created by:</b> <span id="task-modal-creator"></span></p>
+                    <p class="subtitle has-text-centered"><b>Last updated on:</b> <span id="task-modal-last-update-date"></span></p>
+                    <p class="subtitle has-text-centered"><b>Last changed by:</b> <span id="task-modal-last-update-user"></span></p>
+                    <p class="subtitle has-text-centered"><b>Worklogs assigned to this task:</b> <span id="task-modal-worklogs"></span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="modal" id="team-modal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick="$('#team-modal').removeClass('is-active');">X</button>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns">
+                    <div class="column has-text-centered">
+                        <button id="delete-task" class="button is-danger is-outlined">
+                            <span class="icon is-small">
+                                <i class="fas fa-times"></i>
+                            </span>
+                            <span>Delete</span>
+                        </button>
+                    </div>
+                    <div class="column">
+                        <p class="title has-text-centered" id="team-modal-title">testTitle</p>
+                    </div>
+                    <div class="column has-text-centered">
+                        <button class="button is-link is-outlined" onclick="$('#team-modal').removeClass('is-active'); editTeam();">
+                            <span class="icon is-small">
+                                <i class="fas fa-pencil-alt"></i>
+                            </span>
+                            <span>Edit</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="level"></div>
+                    <p class="subtitle has-text-centered"><b>Created on:</b> <span id="team-modal-date-of-creation">testDate</span></p>
+                    <p class="subtitle has-text-centered"><b>Created by:</b> <span id="team-modal-creator"></span></p>
+                    <p class="subtitle has-text-centered"><b>Last updated on:</b> <span id="team-modal-last-update-date"></span></p>
+                    <p class="subtitle has-text-centered"><b>Last changed by:</b> <span id="team-modal-last-update-user"></span></p>
+                    <p class="subtitle has-text-centered"><b>Users in this team:</b> <span id="team-modal-users"></span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="modal" id="user-modal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick="$('#user-modal').removeClass('is-active');">X</button>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns">
+                    <div class="column has-text-centered">
+                        <button id="delete-task" class="button is-danger is-outlined">
+                            <span class="icon is-small">
+                                <i class="fas fa-times"></i>
+                            </span>
+                            <span>Delete</span>
+                        </button>
+                    </div>
+                    <div class="column">
+                        <p class="title has-text-centered" id="user-modal-names">testNames</p>
+                    </div>
+                    <div class="column has-text-centered">
+                        <button class="button is-link is-outlined" onclick="$('#user-modal').removeClass('is-active'); editUser();">
+                            <span class="icon is-small">
+                                <i class="fas fa-pencil-alt"></i>
+                            </span>
+                            <span>Edit</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="level"></div>
+                    <p class="subtitle has-text-centered"><b>Username:</b> <span id="user-modal-username">testDate</span></p>
+                    <div class="columns is-centered is-flex">
+                        <div class="column is-centered is-vcentered">
+                            <p class="title is-horizontal is-5 has-text-centered">
+                                <button class="button is-link is-outlined has-text-centered" onclick="showPassword(selectedUser)">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-eye"></i>
+                                    </span>
+                                  </button>
+                                <b>Password: </b>
+                                <span id="user-modal-password"></span> </p>
+                        </div>
+                    </div>
+                    <p class="subtitle has-text-centered"><b>First Name:</b> <span id="user-modal-first-name">testDate</span></p>
+                    <p class="subtitle has-text-centered"><b>Last Name:</b> <span id="user-modal-last-name">testDate</span></p>
+                    <p class="subtitle has-text-centered"><b>Created on:</b> <span id="user-modal-date-of-creation">testDate</span></p>
+                    <p class="subtitle has-text-centered"><b>Created by:</b> <span id="user-modal-creator"></span></p>
+                    <p class="subtitle has-text-centered"><b>Last updated on:</b> <span id="user-modal-last-update-date"></span></p>
+                    <p class="subtitle has-text-centered"><b>Last changed by:</b> <span id="user-modal-last-update-user"></span></p>
+                    <p class="subtitle has-text-centered"><b>Is admin:</b> <span id="user-modal-is-admin">testDate</span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
 </body>
 <script>
-    var selectedItem, selectedProject;
+    var selectedItem, selectedProject, selectedTask, selectedTeam, selectedUser;
 
     let projects = <%- JSON.stringify(data.projects) %>;
     let users = <%- JSON.stringify(data.users) %>;
@@ -625,6 +822,83 @@
         $("#project-edit-tasks").html(str)
         $("#project-modal-edit-tasks").removeClass("is-active");
         $("#project-modal-edit").addClass("is-active");
+    }
+
+    async function openTask(id) {
+        $("#task-modal").addClass("is-active");
+        const asignee = users.filter(user=>user.Id == tasks[id].AsigneeId)[0];
+        const creator = users.filter(user=>user.Id == tasks[id].CreatorId)[0];
+        const lastUpdateUser = users.filter(user=>user.Id == tasks[id].LatestChangeUserId)[0];
+        const worklogsOfTask = worklogs.filter(worklog => worklog.TaskId == tasks[id].Id);
+        // FINISH WORKLOGS
+
+        console.log();
+        $("#task-modal-title").html(tasks[id].Title);
+        $("#task-modal-project").html(projects.filter(project=> project.Id == tasks[id].ProjectId)[0].Title);
+        $("#task-modal-asignee").html(asignee.FirstName+" "+asignee.LastName);
+        $("#task-modal-description").html(tasks[id].Description);
+        $("#task-modal-status").html(convertStatusToString(tasks[id].Status));
+        $("#task-modal-date-of-creation").html(tasks[id].DateOfCreation.substring(0,10));
+        $("#task-modal-creator").html(creator.FirstName+" "+creator.LastName);
+        $("#task-modal-last-update-date").html(tasks[id].DateOfLastChange.substring(0,10));
+        $("#task-modal-last-update-user").html(lastUpdateUser.FirstName+" "+lastUpdateUser.LastName);
+        $("#task-modal-worklogs").html();
+    }
+
+    async function openTeam(id) {
+
+
+        $("#team-modal").addClass("is-active");
+        const creator = users.filter(user=>user.Id == teams[id].CreatorId)[0];
+        const lastUpdateUser = users.filter(user=>user.Id == teams[id].LatestChangeUserId)[0];
+        const usersInTeam = await fetch(`/get-team-users/${teams[id].Id}`, {method:"GET"});
+        const obj = await usersInTeam.json();
+        let str="";
+        
+        for(const item of obj) {
+            console.log(item);
+            str+=item[0].FirstName+" "+item[0].LastName+", ";
+        }
+        str=str.substring(0,str.length-2);
+
+        console.log(obj);
+        $("#team-modal-title").html(teams[id].Title)
+        $("#team-modal-date-of-creation").html(teams[id].DateOfCreation.substring(0,10));
+        $("#team-modal-creator").html(creator.FirstName+" "+creator.LastName);
+        $("#team-modal-last-update-date").html(teams[id].DateOfLastChange.substring(0,10));
+        $("#team-modal-last-update-user").html(lastUpdateUser.FirstName+" "+lastUpdateUser.LastName);
+        $("#team-modal-users").html(str);
+    }
+
+    async function openUser(id) {
+        $("#user-modal").addClass("is-active");
+        const creator = users.filter(user=>user.Id == users[id].CreatorId)[0];
+        const lastUpdateUser = users.filter(user=>user.Id == users[id].LatestChangeUserId)[0];
+        let str="*";
+
+        $("#user-modal-names").html(users[id].FirstName+" "+users[id].LastName);
+        $("#user-modal-username").html(users[id].Username);
+        $("#user-modal-first-name").html(users[id].FirstName);
+        $("#user-modal-last-name").html(users[id].LastName);
+        $("#user-modal-password").html(str.repeat(users[id].Password.length));
+        $("#user-modal-date-of-creation").html(users[id].DateOfCreation.substring(0,10));
+        $("#user-modal-creator").html(creator.FirstName+" "+creator.LastName);
+        $("#user-modal-last-update-date").html(users[id].DateOfLastChange.substring(0,10));
+        $("#user-modal-last-update-user").html(lastUpdateUser.FirstName+" "+lastUpdateUser.LastName);
+        $("#user-modal-is-admin").html(users[id].IsAdmin);
+    }
+
+    function showPassword(id) {
+        id = id.substring(2,id.length);
+        $("#user-modal-password").html(users[id].Password);
+    }
+
+    function convertStatusToString(status) {
+        switch(status) {
+            case 1: return "Backlog"; break;
+            case 2: return "In progress"; break;
+            case 3: return "Done"; break;
+        }
     }
 
     const deleteProject = $("#delete-project");

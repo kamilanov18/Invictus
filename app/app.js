@@ -131,3 +131,8 @@ app.post("/create-project/:title/:description", async (req,res)=>{
     const project = { title: req.params.title, description: req.params.description, creatorId: req.session.userId };
     await DBM.createProject(project);
 });
+
+app.post("/update-project", async(req,res)=>{
+    const newProject = req.body;
+    console.log(newProject);
+});

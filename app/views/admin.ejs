@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,7 +23,7 @@
                     width="112" height="28">
             </a>
         </div>
-        <div class="navbar-item">a</div>
+        
         <div class="navbar-end">
             <div class="navbar-item">
                 <form method="post" action="/logout"><button class="button is-warning is-outlined">Logout</button>
@@ -260,7 +259,7 @@
             <div class="box">
                 <div class="columns">
                     <div class="column">
-                        <button class="button" onclick='$("#project-modal-create").removeClass("is-active");'>X</button>
+                        <button class="button"  type="button" onclick='$("#project-modal-create").removeClass("is-active");'>X</button>
                     </div>
                 </div>
                 <div class="columns">
@@ -374,10 +373,22 @@
                                 <span id="project-edit-teams"></span> </p>
                         </div>
                     </div>
+                    <div class="columns is-centered is-flex">
+                        <div class="column is-centered is-vcentered">
+                            <p class="title is-horizontal is-5 has-text-centered">
+                                <button class="button is-link is-outlined has-text-centered" onclick="$('#project-modal-edit').removeClass('is-active'); $('#project-modal-edit-tasks').addClass('is-active')">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </span>
+                                  </button>
+                                <b>Tasks assigned to this project: </b>
+                                <span id="project-edit-tasks"></span> </p>
+                        </div>
+                    </div>
                     <div class="columns"><div class="column"></div></div>
                     <div class="columns has-text-centered">
                         <div class="column">
-                            <button class="button is-success is-outlined" id="project-create-btn">
+                            <button type="button" class="button is-success is-outlined" id="project-create-btn" onclick="submitEditProject()">
                                 <span class="icon is-small">
                                   <i class="fas fa-check"></i>
                                 </span>
@@ -397,7 +408,7 @@
             <div class="box">
                 <div class="columns">
                     <div class="column">
-                        <button class="button" onclick="$('#project-modal-edit-teams').removeClass('is-active'); $('#project-modal-edit').addClass('is-active');">Back</button>
+                        <button class="button" onclick="$('.selected-item').removeClass('selected-item'); $('#project-modal-edit-teams').removeClass('is-active'); $('#project-modal-edit').addClass('is-active');">Back</button>
                     </div>
                 </div>
                 <div class="columns is-centered">
@@ -405,7 +416,7 @@
                 </div>
                 <div class="level"></div>
                 <div class="columns is-centered">
-                    <button class="button is-success is-outlined" id="project-create-btn">
+                    <button class="button is-success is-outlined" type="button" id="project-create-btn" onclick="editProjectTeams()">
                         <span class="icon is-small">
                           <i class="fas fa-check"></i>
                         </span>
@@ -426,6 +437,54 @@
                         </div>
                     <% item++; %>
                     <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <form method="POST" id="form-update-project" action="/update-project" style="visibility:hidden;">
+        <input type="text" name="title" id="project-update-title">
+        <input type="text" name="description" id="project-update-description">
+        <input type="text" name="teams" id="project-update-teams">
+        <input type="text" name="tasks" id="project-update-tasks">
+    </form>
+    <div class="modal" id="project-modal-edit-tasks">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick="$('.selected-item').removeClass('selected-item'); $('#project-modal-edit-tasks').removeClass('is-active'); $('#project-modal-edit').addClass('is-active');">Back</button>
+                    </div>
+                </div>
+                <div class="columns is-centered">
+                    <p class="title has-text-centered">Assign tasks to project</p>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-multiline is-centered">
+                    <% item = 0; %>
+                    <% for(const obj of data.tasks) { %>
+                        <div class="column is-one-quarter project is-centered pan" onclick="selectedItem=this.id.substring(4,this.id.length); $('#pta-'+selectedItem).toggleClass('selected-item') "
+                            id="pta-<%= item %>">
+                            <div class="box project-box">
+                                <p class="title has-text-centered has-text-light">
+                                    <%= obj.Title%>
+                                </p>
+                            </div>
+                        </div>
+                    <% item++; %>
+                    <% } %>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered">
+                    <button class="button is-success is-outlined" type="button" id="project-edit-task-save" onclick="editProjectTasks()">
+                        <span class="icon is-small">
+                          <i class="fas fa-check"></i>
+                        </span>
+                        <span>Save</span>
+                      </button>
                 </div>
             </div>
         </div>
@@ -463,11 +522,13 @@
 
         let str="";
 
+
         for(const item of obj) {
             str+=item.Title+", ";
         }
         str=str.substring(0,str.length-2);
         $("#project-modal-teams").html(str);
+        $("#project-edit-teams").html(str);
     }
 
     function createProject() {
@@ -497,10 +558,64 @@
         $("#project-edit-teams").html(str);
     }
 
+    function submitEditProject() {
+        const newTitle = $("#project-edit-title").val();
+        const newDesc = $("#project-edit-description").val();
+        let  newTeams = $("#project-edit-teams").html();
+        let newTasks = $("#project-edit-tasks").html();
+        
+        newTeams = newTeams.split(", ");
+        newTasks = newTasks.split(", ");
+        
+        $("#project-update-title").val(newTitle);
+        $("#project-update-description").val(newDesc);
+        $("#project-update-teams").val(newTeams);
+        $("#project-update-tasks").val(newTasks);
+
+        $("#form-update-project").submit();
+    }
+
     function submitProject() {
         const title = $("#iproject-create-title").val();
         
         $("#project-create-btn")
+    }
+
+    function editProjectTeams() {
+        var all = $(".selected-item");
+        let ids = [];
+        console.log(all);
+        for(let item=0; item<all.length;item++) {
+            ids.push(parseInt(all[item].id.substring(4,all[item].id.length)));
+        }
+
+        let str="";
+        for(const item of ids) {
+            str+=teams[item].Title+", ";
+        }
+        str=str.substring(0,str.length-2);
+
+        $("#project-edit-teams").html(str);
+        $("#project-modal-edit-teams").removeClass("is-active");
+        $("#project-modal-edit").addClass("is-active");
+    }
+
+    function editProjectTasks() {
+        var all = $(".selected-item");
+        let ids = [];
+        console.log(all);
+        for(let item=0; item<all.length;item++) {
+            ids.push(parseInt(all[item].id.substring(4,all[item].id.length)));
+        }
+
+        let str="";
+        for(const item of ids) {
+            str+=tasks[item].Title+", ";
+        }
+        str=str.substring(0,str.length-2);
+        $("#project-edit-tasks").html(str)
+        $("#project-modal-edit-tasks").removeClass("is-active");
+        $("#project-modal-edit").addClass("is-active");
     }
 
     const deleteProject = $("#delete-project");

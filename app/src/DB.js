@@ -431,11 +431,30 @@ class DBManager {
             const pool = await this.#pool;
     
             const results = await pool.request()
-                .query("SELECT Title, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Teams");
+                .query("SELECT Id, Title, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Teams");
             Log.logInfo("getAllTeams");
             return results.recordset;
         } catch(err) {
             Log.logError("getAllTeams",err);
+        }
+    }
+
+    /**
+    * @param {string} title
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async getTeamByTitle(title) {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .input("Title",sql.NVarChar,title)
+                .query("SELECT Id, Title, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Teams WHERE Title like @Title");
+            Log.logInfo("getTeamByTitle");
+            return results.recordset[0];
+        } catch(err) {
+            Log.logError("getTeamByTitle",err);
         }
     }
 
@@ -960,6 +979,32 @@ class DBManager {
             Log.logInfo("addTeamToProject");
         } catch(err) {
             Log.logError("addTeamToProject",err);
+        }
+    }
+
+    /**
+    * @param {array} teams
+    * @param {number} projectId
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async addTeamsToProject(teams,projectId) {
+        try {
+            const pool = await this.#pool;
+    
+            Validations.validateNumericability(projectId);
+
+            for(const teamTitle of teams) {
+                const team = await getTeamByTitle(teamTitle);
+                const results = await pool.request()
+                    .input("TeamId",sql.Int,team.Id)
+                    .input("ProjectId",sql.Int,projectId)
+                    .query("UPDATE TeamsProjects SET ProjectId=@ProjectId WHERE TeamId like @TeamId")
+            }
+
+            Log.logInfo("addTeamsToProject");
+        } catch(err) {
+            Log.logError("addTeamsToProject",err);
         }
     }
 

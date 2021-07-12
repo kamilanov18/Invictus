@@ -153,7 +153,7 @@
             <div class="columns is-multiline is-centered ">
                 <% let item=0 %>
                     <% for(const obj of data.projects) {%>
-                        <div class="column is-one-quarter project is-centered pan" onclick="openProject(this.id); selectedItem=this.id"
+                        <div class="column is-one-quarter project is-centered pan" onclick="selectedProject=this.id; openProject(this.id); "
                             id="<%= item %>">
                             <div class="box project-box">
                                 <p class="title has-text-centered has-text-light">
@@ -246,6 +246,7 @@
                 <p class="subtitle has-text-centered"><b>Last updated on:</b> <span id="project-modal-last-update-date"></span></p>
                 <p class="subtitle has-text-centered"><b>Last changed by:</b> <span id="project-modal-last-update-user"></span></p>
                 <p class="subtitle has-text-centered"><b>Teams assigned to this project:</b> <span id="project-modal-teams"></span>
+                    <p class="subtitle has-text-centered"><b>Tasks assigned to this project:</b> <span id="project-modal-tasks"></span>
             </div>
         </div>
     </div>
@@ -427,7 +428,7 @@
                 <div class="columns is-multiline is-centered">
                     <% item = 0; %>
                     <% for(const obj of data.teams) { %>
-                        <div class="column is-one-quarter project is-centered pan" onclick="selectedItem=this.id.substring(4,this.id.length); $('#pte-'+selectedItem).toggleClass('selected-item') "
+                        <div class="column is-one-quarter project is-centered pan" onclick="selectedItem=this.id.substring(4,this.id.length); $('#pte-'+selectedItem).toggleClass('selected-item')"
                             id="pte-<%= item %>">
                             <div class="box project-box">
                                 <p class="title has-text-centered has-text-light">
@@ -449,6 +450,7 @@
         <input type="text" name="description" id="project-update-description">
         <input type="text" name="teams" id="project-update-teams">
         <input type="text" name="tasks" id="project-update-tasks">
+        <input type="text" name="projectId" id="project-update-projectId">
     </form>
     <div class="modal" id="project-modal-edit-tasks">
         <div class="modal-background"></div>
@@ -493,7 +495,7 @@
 
 </body>
 <script>
-    var selectedItem;
+    var selectedItem, selectedProject;
 
     let projects = <%- JSON.stringify(data.projects) %>;
     let users = <%- JSON.stringify(data.users) %>;
@@ -502,6 +504,8 @@
     let worklogs = <%- JSON.stringify(data.worklogs) %>;
 
     async function openProject(id) {
+        let str="";
+
         $("#project-modal").addClass("is-active");
         $("#project-modal-title").html(projects[id].Title);
         $("#project-modal-description").html(projects[id].Description);
@@ -515,14 +519,18 @@
         let user = users.filter(user => user.Id === LatestChangeUserId)[0];
         $("#project-modal-last-update-user").html(user.FirstName+" "+user.LastName);
 
+        const tasksOfProject = tasks.filter( task => task.ProjectId == projects[selectedProject].Id);
+        console.log(tasksOfProject);
+        for(const item of tasksOfProject) {
+            str+=item.Title+", ";
+        }
+        str=str.substring(0,str.length-2);
+        $("#project-modal-tasks").html(str);
+        $("#project-edit-tasks").html(str);
+
         const results = await fetch(`/get-users-teams/${Id}`, {method: "GET"});
         let obj = await results.json();
-
-        console.log(obj);
-
-        let str="";
-
-
+        str="";
         for(const item of obj) {
             str+=item.Title+", ";
         }
@@ -538,15 +546,13 @@
     async function editProject() {
         $("#project-modal-create").removeClass("is-active");
         $("#project-modal-edit").addClass("is-active");
-        $("#project-edit-title").val(projects[selectedItem].Title);
-        $("#project-edit-description").val(projects[selectedItem].Description);
+        $("#project-edit-title").val(projects[selectedProject].Title);
+        $("#project-edit-description").val(projects[selectedProject].Description);
 
-        const { Id } = projects.filter(project => project.Id === projects[selectedItem].Id)[0];
+        const { Id } = projects.filter(project => project.Id === projects[selectedProject].Id)[0];
 
         const results = await fetch(`/get-users-teams/${Id}`, {method: "GET"});
         let obj = await results.json();
-
-        console.log(obj);
 
         let str="";
 
@@ -566,11 +572,12 @@
         
         newTeams = newTeams.split(", ");
         newTasks = newTasks.split(", ");
-        
+
         $("#project-update-title").val(newTitle);
         $("#project-update-description").val(newDesc);
         $("#project-update-teams").val(newTeams);
         $("#project-update-tasks").val(newTasks);
+        $("#project-update-projectId").val(projects[selectedProject].Id);
 
         $("#form-update-project").submit();
     }
@@ -586,7 +593,8 @@
         let ids = [];
         console.log(all);
         for(let item=0; item<all.length;item++) {
-            ids.push(parseInt(all[item].id.substring(4,all[item].id.length)));
+            if(all[item].id.substr(0,4)=="pte-")
+                ids.push(parseInt(all[item].id.substring(4,all[item].id.length)));
         }
 
         let str="";
@@ -605,7 +613,8 @@
         let ids = [];
         console.log(all);
         for(let item=0; item<all.length;item++) {
-            ids.push(parseInt(all[item].id.substring(4,all[item].id.length)));
+            if(all[item].id.substr(0,4)=="pta-")
+                ids.push(parseInt(all[item].id.substring(4,all[item].id.length)));
         }
 
         let str="";
@@ -620,12 +629,11 @@
 
     const deleteProject = $("#delete-project");
     const delButton = document.querySelector("#deleteButton");
-    console.log(delButton);
+
     delButton.addEventListener("click", (e) => {
         e.preventDefault();
         const title = $("#project-modal-title").html();
         const { Id } = projects.filter(project => project.Title === title)[0];
-        console.log(`/delete-project/${Id}`);
         fetch(`/delete-project/${Id}`, { method: "POST" });
         location.reload();
     });

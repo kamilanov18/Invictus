@@ -555,7 +555,7 @@ class DBManager {
 
             const results = await pool.request()
                 .input("TaskId",sql.Int,id)
-                .query("SELECT ProjectId, AsigneeId, Title, Description, Status, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Tasks WHERE Id = @TaskId")
+                .query("SELECT Id, ProjectId, AsigneeId, Title, Description, Status, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Tasks WHERE Id = @TaskId")
             Log.logInfo("getTaskById");
             return results.recordset[0];
         } catch(err) {
@@ -824,6 +824,24 @@ class DBManager {
     }
 
     /**
+    * @param {string} title
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async getProjectByTitle(title) {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .input("Title",sql.NVarChar,id)
+                .query("SELECT Id, Title, Description, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Projects WHERE Title like @Title")
+            Log.logInfo("getProjectByTitle");
+        } catch(err) {
+            Log.logError("getProjectByTitle",err);
+        }
+    }
+
+    /**
     * Gets all projects
     * @author Kristian Milanov
     * @returns {array}
@@ -852,7 +870,7 @@ class DBManager {
         try {
             const pool = await this.#pool;
 
-            const oldProject = this.getWorklogById(projectId);
+            const oldProject = this.getProjectById(projectId);
             for(const key in newProject) {
                 oldProject[key] = newProject[key];
             }
@@ -994,17 +1012,79 @@ class DBManager {
     
             Validations.validateNumericability(projectId);
 
-            for(const teamTitle of teams) {
-                const team = await getTeamByTitle(teamTitle);
+            await pool.request()
+                    .input("ProjectId",sql.Int,projectId)
+                    .query("UPDATE TeamsProjects SET ProjectId = NULL WHERE ProjectId = @ProjectId")
+
+            for(const teamTitle in teams) {
+                
+                const team = await this.getTeamByTitle(teams[teamTitle]);
+                console.log(team.Id);
+                
                 const results = await pool.request()
                     .input("TeamId",sql.Int,team.Id)
                     .input("ProjectId",sql.Int,projectId)
-                    .query("UPDATE TeamsProjects SET ProjectId=@ProjectId WHERE TeamId like @TeamId")
+                    .query("UPDATE TeamsProjects SET ProjectId=@ProjectId WHERE TeamId = @TeamId")
             }
 
             Log.logInfo("addTeamsToProject");
         } catch(err) {
             Log.logError("addTeamsToProject",err);
+        }
+    }
+
+    /**
+    * @param {string} title
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async getTaskByTitle(title) {
+        try {
+            const pool = await this.#pool;
+
+            Validations.validateTitle(title);
+    
+            const results = await pool.request()
+                .input("Title",sql.NVarChar,title)
+                .query("SELECT Id, ProjectId, AsigneeId, Title, Description, Status, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Tasks WHERE Title like @Title");
+    
+            Log.logInfo("getTaskByTitle");
+            return results.recordset[0];
+        } catch(err) {
+            Log.logError("getTaskByTitle",err);
+        }
+    }
+
+    /**
+    * @param {array} tasks
+    * @param {string} projectId
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async addTasksToProject(tasks,projectId) {
+        try {
+            const pool = await this.#pool;
+    
+            Validations.validateNumericability(projectId);
+
+            await pool.request()
+                    .input("ProjectId",sql.Int,projectId)
+                    .query("UPDATE Tasks SET ProjectId = NULL WHERE ProjectId = @ProjectId")
+
+            for(const taskTitle in tasks) {
+        
+                const task = await this.getTaskByTitle(tasks[taskTitle]);
+                console.log(task);
+                
+                const results = await pool.request()
+                    .input("TaskId",sql.Int,task.Id)
+                    .input("ProjectId",sql.Int,projectId)
+                    .query("UPDATE Tasks SET ProjectId=@ProjectId WHERE Id = @TaskId")
+            }
+    
+            Log.logInfo("addTasksToProject");
+        } catch(err) {
+            Log.logError("addTasksToProject",err);
         }
     }
 

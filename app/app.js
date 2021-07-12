@@ -134,5 +134,12 @@ app.post("/create-project/:title/:description", async (req,res)=>{
 
 app.post("/update-project", async(req,res)=>{
     const newProject = req.body;
-    console.log(newProject);
+    newProject.teams = newProject.teams.split(",");
+    newProject.tasks = newProject.tasks.split(",");
+    
+    await DBM.updateProject(newProject.projectId,newProject,req.session.userId);
+    await DBM.addTeamsToProject(newProject.teams, newProject.projectId);
+    await DBM.addTasksToProject(newProject.tasks, newProject.projectId);
+
+    res.redirect("/admin");
 });

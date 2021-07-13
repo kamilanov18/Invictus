@@ -154,3 +154,22 @@ app.get("/get-team-users/:teamId", async(req,res)=>{
     }
     res.send(usersNames);
 })
+// /tasks
+// POST   => CREATE
+// PUT    => UPDATE
+// DELETE => DELETE
+// GET    => GET => return all items
+// GET /tasks/:id => GET concrete item
+app.post("/create-task", async (req,res)=>{
+    const task = req.body;
+    task.creatorId=req.session.userId;
+    await DBM.createTask(task);
+    res.redirect("/admin");
+});
+
+app.post("/delete-task/:id", async (req,res)=>{
+    const id = req.params.id;
+    await DBM.deleteTask(id);
+    // res.redirect("/admin");
+    res.sendStatus(204);
+})

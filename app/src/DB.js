@@ -573,7 +573,7 @@ class DBManager {
             const pool = await this.#pool;
     
             const results = await pool.request()
-                .query("SELECT ProjectId, AsigneeId, Title, Description, Status, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Tasks")
+                .query("SELECT Id, ProjectId, AsigneeId, Title, Description, Status, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Tasks")
             Log.logInfo("getAllTasks");
             return results.recordset;
         } catch(err) {
@@ -919,6 +919,10 @@ class DBManager {
                     .input("TaskId",sql.Int,task.Id)
                     .execute("DeleteTask")
             }
+
+            await pool.request()
+                .input("Id",sql.Int,projectId)
+                .query("DELETE FROM TeamsProjects WHERE ProjectId = @Id");
 
             await pool.request()
                 .input("Id",sql.Int,projectId)

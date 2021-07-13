@@ -181,7 +181,7 @@
             <div class="columns is-multiline is-centered ">
                 <% item=0 %>
                     <% for(const obj of data.tasks) {%>
-                        <div class="column is-one-quarter project is-centered pan" onclick="selectedProject=this.id; openTask(this.id.substring(3,this.id.length)); "
+                        <div class="column is-one-quarter project is-centered pan" onclick="selectedTask=this.id; openTask(this.id.substring(3,this.id.length)); "
                             id="ta-<%= item %>">
                             <div class="box project-box">
                                 <p class="title has-text-centered has-text-light">
@@ -554,7 +554,7 @@
                 <div class="level"></div>
                 <div class="columns">
                     <div class="column has-text-centered">
-                        <button id="delete-task" class="button is-danger is-outlined">
+                        <button id="delete-task" class="button is-danger is-outlined" onclick="deleteTask(selectedTask)">
                             <span class="icon is-small">
                                 <i class="fas fa-times"></i>
                             </span>
@@ -690,6 +690,180 @@
     </div>
 </section>
 
+<section>
+    <form id="task-create-form" method="POST", action="/create-task">
+        <input type="text" id="task-create-form-title" name="title"style="display: hidden;" >
+        <input type="text" id="task-create-form-description" name="description"style="display: hidden;" >
+        <input type="text" id="task-create-form-projectId" name="projectId"style="display: hidden;" >
+        <input type="text" id="task-create-form-asigneeId" name="asigneeId"style="display: hidden;" >
+        <input type="text" id="task-create-form-status" name="status"style="display: hidden;" >
+        <input type="text" id="task-create-form-creatorId" name="creatorId"style="display: hidden;" >
+    </form>
+    <div class="modal" id="task-modal-create">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick="$('#task-modal-create').removeClass('is-active'); selectedItem=-1">X</button>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column">
+                        <p class="title has-text-centered">Create Task</p>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                          <label class="label">Title: </label>
+                        </div>
+                        <div class="field-body">
+                          <div class="field">
+                            <p class="control">
+                              <input class="input" id="task-create-title" type="text" placeholder="Task title">
+                            </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                          <label class="label">Description: </label>
+                        </div>
+                        <div class="field-body">
+                          <div class="field">
+                            <p class="control">
+                              <input class="input" id="task-create-description" type="text" placeholder="Task description">
+                            </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="columns is-centered has-text-centered">
+                    <div class="column is-centered has-text-centered">
+                        <span class="label">Status:</span>
+                        <div class="select" >
+                            <select id="task-create-status">
+                              <option value="1">Backlog</option>
+                              <option value="2">In progress</option>
+                              <option value="3">Done</option>
+                            </select>
+                          </div>
+                    </div>  
+                </div>
+                <div class="columns">
+                    <div class="column has-text-centered">
+                        
+                        <button class="button is-success is-outlined" onclick="$('#task-modal-create').removeClass('is-active'); $('#task-modal-create-select-project').addClass('is-active');">
+                            <span class="icon is-small">
+                                <i class="far fa-hand-pointer"></i>
+                            </span>
+                            <span>Select</span>
+                        </button>
+                        <p class="label is-inline is-normal">Belongs to project:  </p> <span id="task-create-modal-project"></span>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column has-text-centered">
+                        
+                        <button class="button is-success is-outlined" onclick="$('#task-modal-create').removeClass('is-active'); $('#task-modal-create-select-user').addClass('is-active');">
+                            <span class="icon is-small">
+                                <i class="far fa-hand-pointer"></i>
+                            </span>
+                            <span>Select</span>
+                        </button>
+                        <p class="label is-inline is-normal">Assign to user:  </p> <span id="task-create-modal-user"></span>
+                    </div>
+                </div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <button class="button is-success" id="project-create-btn" onclick="submitCreateTask()">
+                            <span class="icon is-small">
+                              <i class="fas fa-check"></i>
+                            </span>
+                            <span>Save</span>
+                          </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="modal" id="task-modal-create-select-project">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick="$('#task-modal-create-select-project').removeClass('is-active'); $('#task-modal-create').addClass('is-active')">Back</button>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column has-text-centered">
+                        <p class="title">Select a project to assign this task to: </p>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-multiline is-centered">
+                    <% item = 0; %>
+                    <% for(const obj of data.projects) { %>
+                        <div class="column is-one-quarter project is-centered pan" onclick="selectedItem=this.id.substring(4,this.id.length); console.log(selectedItem); $('#task-create-modal-project').html(projects[selectedItem].Title); $('#task-modal-create-select-project').removeClass('is-active'); $('#task-modal-create').addClass('is-active')"
+                            id="tap-<%= item %>">
+                            <div class="box project-box">
+                                <p class="title has-text-centered has-text-light">
+                                    <%= obj.Title%>
+                                </p>
+                            </div>
+                        </div>
+                    <% item++; %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="modal" id="task-modal-create-select-user">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick="$('#task-modal-create-select-user').removeClass('is-active'); $('#task-modal-create').addClass('is-active')">Back</button>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column has-text-centered">
+                        <p class="title">Select a project to assign this task to: </p>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-multiline is-centered">
+                    <% item = 0; %>
+                    <% for(const obj of data.users) { %>
+                        <div class="column is-one-quarter project is-centered pan" onclick="selectedItem=this.id.substring(4,this.id.length); console.log(selectedItem); $('#task-create-modal-user').html(users[selectedItem].FirstName+' '+users[selectedItem].LastName); $('#task-modal-create-select-user').removeClass('is-active'); $('#task-modal-create').addClass('is-active')"
+                            id="tap-<%= item %>">
+                            <div class="box project-box">
+                                <p class="title has-text-centered has-text-light">
+                                    <%= obj.FirstName%> <%= obj.LastName%>
+                                </p>
+                            </div>
+                        </div>
+                    <% item++; %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 </body>
 <script>
     var selectedItem, selectedProject, selectedTask, selectedTeam, selectedUser;
@@ -738,6 +912,21 @@
 
     function createProject() {
         $("#project-modal-create").addClass("is-active");
+    }
+
+    function submitCreateTask() {
+        const form = $("#task-create-form");
+        var e = document.getElementById("task-create-status");
+        var status = e.options[e.selectedIndex].value;
+        const userId = users.filter(user=> user.FirstName==users[selectedItem].FirstName && user.LastName==users[selectedItem].LastName)[0].Id;
+        const projectId = projects.filter(project=> project.Title == projects[selectedItem].Title)[0].Id;
+
+        $("#task-create-form-title").val($("#task-create-title").val());
+        $("#task-create-form-description").val($("#task-create-description").val());
+        $("#task-create-form-status").val(status);
+        $("#task-create-form-projectId").val(projectId);
+        $("#task-create-form-asigneeId").val(userId);
+        form.submit();
     }
 
     async function editProject() {
@@ -886,6 +1075,19 @@
         $("#user-modal-last-update-date").html(users[id].DateOfLastChange.substring(0,10));
         $("#user-modal-last-update-user").html(lastUpdateUser.FirstName+" "+lastUpdateUser.LastName);
         $("#user-modal-is-admin").html(users[id].IsAdmin);
+    }
+
+    function createTask() {
+        $("#task-modal-create").addClass("is-active");
+    }
+
+    async function deleteTask(id) {
+        id=parseInt(id.substr(3,id.length));
+        
+        id=tasks[id].Id;
+        console.log(id);
+        await fetch(`/delete-task/${id}`, { method:"POST" });
+        window.location.reload();
     }
 
     function showPassword(id) {

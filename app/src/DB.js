@@ -210,7 +210,6 @@ class DBManager {
                  .input("FirstName",sql.NVarChar,user.firstName)
                  .input("LastName",sql.NVarChar,user.lastName)
                  .input("CreatorId",sql.Int, user.creatorId)
-                 .input("LatestChangeUserId",sql.Int,user.latestChangeUserId)
                  .input("IsAdmin",sql.Bit,user.isAdmin)
                  .execute("CreateUser");
 
@@ -240,6 +239,25 @@ class DBManager {
             return results.recordset[0];
         } catch(err) {
             Log.logError("getPublicUserDataById",err);
+        }
+    }
+
+    /**
+    * @author Kristian Milanov
+    * @returns {*}
+    */
+    async getRealUserCount() {
+        try {
+            const pool = await this.#pool;
+    
+            const results = await pool.request()
+                .query("SELECT Id FROM Users WHERE IsDeleted = 0")
+
+            Log.logInfo("getRealUserCount");
+
+            return results.recordset.length;
+        } catch(err) {
+            Log.logError("getRealUserCount",err);
         }
     }
 
@@ -360,7 +378,7 @@ class DBManager {
             Validations.validateTitle(team.title);
             Validations.validateNumericability(team.creatorId);
 
-            const result = pool.request()
+            const result = await pool.request()
                 .input("Title",sql.NVarChar,team.title)
                 .input("CreatorId",sql.Int,team.creatorId)
                 .execute("CreateTeam")
@@ -450,7 +468,7 @@ class DBManager {
     
             const results = await pool.request()
                 .input("Title",sql.NVarChar,title)
-                .query("SELECT Id, Title, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Teams WHERE Title like @Title");
+                .query("SELECT Id, Title, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Teams WHERE Title = @Title");
             Log.logInfo("getTeamByTitle");
             return results.recordset[0];
         } catch(err) {

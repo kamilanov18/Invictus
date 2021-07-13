@@ -66,7 +66,8 @@ app.get("/admin", redirectLogin, async (req, res)=>{
         users: await DBM.getAllUsers(),
         tasks: await DBM.getAllTasks(),
         worklogs: await DBM.getAllWorklogs(),
-        teams: await DBM.getAllTeams()
+        teams: await DBM.getAllTeams(),
+        realUsersCount: await DBM.getRealUserCount()
     };
     res.render("../views/admin.ejs", { data });
 });
@@ -170,6 +171,38 @@ app.post("/create-task", async (req,res)=>{
 app.post("/delete-task/:id", async (req,res)=>{
     const id = req.params.id;
     await DBM.deleteTask(id);
-    // res.redirect("/admin");
+    res.sendStatus(204);
+})
+
+app.post("/create-team", async(req,res)=>{
+    let { title, users} = req.body
+    users=users.split(",");
+    await DBM.createTeam({title, creatorId: req.session.userId});
+    let team = await DBM.getTeamByTitle(title);
+    console.log(team);
+    for(let item of users) {
+        item = parseInt(item);
+        await DBM.addUserToTeam(item,team.Id);
+    }
+    res.redirect("/admin");
+})
+
+app.post("/delete-team/:id", async(req,res)=>{
+    let { id } = req.params;
+    await DBM.deleteTeam(id);
+    res.sendStatus(204);
+})
+
+app.post("/create-user", async(req,res)=>{
+    let user = req.body;
+    user.isAdmin=parseInt(user.isAdmin);
+    user.creatorId=req.session.userId;
+    await DBM.createUser(user);
+    res.redirect("/admin");
+})
+
+app.post("/delete-user/:id", async(req,res)=>{
+    let id = req.params.id;
+    await DBM.deleteUser(id);
     res.sendStatus(204);
 })

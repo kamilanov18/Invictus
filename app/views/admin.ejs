@@ -94,7 +94,7 @@
                             </span>
                         </span>
                         <span class="has-text-light">Users: <span class="counter">
-                                <%= data.users.length %>
+                                <%= data.realUsersCount %>
                             </span></span>
                     </p>
                 </div>
@@ -200,7 +200,7 @@
             <div class="columns is-multiline has-text-centered">
                 <div class="column is-full has-text-centered">
                     <p class="pan-title title is-1 has-text-centered is-inline" id="title-teams">Teams</p>
-                    <button class="button is-success add-btn" onclick="createTeam()">
+                    <button class="button is-success add-btn" onclick="$('#team-modal-create').addClass('is-active')">
                         <span class="icon is-small">
                             <i class="fas fa-plus"></i>
                         </span>
@@ -230,7 +230,7 @@
             <div class="columns is-multiline has-text-centered">
                 <div class="column is-full has-text-centered">
                     <p class="pan-title title is-1 has-text-centered is-inline" id="title-users">Users</p>
-                    <button class="button is-success add-btn" onclick="createUser()">
+                    <button class="button is-success add-btn" onclick="$('#user-modal-create').addClass('is-active')">
                         <span class="icon is-small">
                             <i class="fas fa-plus"></i>
                         </span>
@@ -241,15 +241,17 @@
             <div class="columns is-multiline is-centered ">
                 <% item=0 %>
                     <% for(const obj of data.users) {%>
-                        <div class="column is-one-quarter project is-centered pan" onclick="selectedUser=this.id; openUser(this.id.substring(2,this.id.length)); "
-                            id="u-<%= item %>">
-                            <div class="box project-box">
-                                <p class="title has-text-centered has-text-light">
-                                    <%= obj.FirstName%> <%= obj.LastName %>
-                                </p>
+                        <% if(!obj.IsDeleted) { %>
+                            <div class="column is-one-quarter project is-centered pan" onclick="selectedUser=this.id; openUser(this.id.substring(2,this.id.length)); "
+                                id="u-<%= item %>">
+                                <div class="box project-box">
+                                    <p class="title has-text-centered has-text-light">
+                                        <%= obj.FirstName%> <%= obj.LastName %>
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                        <% item++ %>
+                            <% item++ %>
+                        <% } %>
                     <% } %>
             </div>
         </div>
@@ -583,7 +585,10 @@
                     <p class="subtitle has-text-centered"><b>Created by:</b> <span id="task-modal-creator"></span></p>
                     <p class="subtitle has-text-centered"><b>Last updated on:</b> <span id="task-modal-last-update-date"></span></p>
                     <p class="subtitle has-text-centered"><b>Last changed by:</b> <span id="task-modal-last-update-user"></span></p>
-                    <p class="subtitle has-text-centered"><b>Worklogs assigned to this task:</b> <span id="task-modal-worklogs"></span>
+                    <p class="subtitle has-text-centered"><b>Worklogs assigned to this task:</b>
+                    <div class="columns" id="task-modal-worklogs">
+
+                    </div>
             </div>
         </div>
     </div>
@@ -602,7 +607,7 @@
                 <div class="level"></div>
                 <div class="columns">
                     <div class="column has-text-centered">
-                        <button id="delete-task" class="button is-danger is-outlined">
+                        <button id="delete-task" class="button is-danger is-outlined" onclick="deleteTeam(selectedTeam)">
                             <span class="icon is-small">
                                 <i class="fas fa-times"></i>
                             </span>
@@ -645,7 +650,7 @@
                 <div class="level"></div>
                 <div class="columns">
                     <div class="column has-text-centered">
-                        <button id="delete-task" class="button is-danger is-outlined">
+                        <button id="delete-task" class="button is-danger is-outlined" onclick="deleteUser(selectedUser)">
                             <span class="icon is-small">
                                 <i class="fas fa-times"></i>
                             </span>
@@ -691,13 +696,13 @@
 </section>
 
 <section>
-    <form id="task-create-form" method="POST", action="/create-task">
-        <input type="text" id="task-create-form-title" name="title"style="display: hidden;" >
-        <input type="text" id="task-create-form-description" name="description"style="display: hidden;" >
-        <input type="text" id="task-create-form-projectId" name="projectId"style="display: hidden;" >
-        <input type="text" id="task-create-form-asigneeId" name="asigneeId"style="display: hidden;" >
-        <input type="text" id="task-create-form-status" name="status"style="display: hidden;" >
-        <input type="text" id="task-create-form-creatorId" name="creatorId"style="display: hidden;" >
+    <form id="task-create-form" method="POST", action="/create-task" style="visibility:hidden;">
+        <input type="text" id="task-create-form-title" name="title" >
+        <input type="text" id="task-create-form-description" name="description">
+        <input type="text" id="task-create-form-projectId" name="projectId">
+        <input type="text" id="task-create-form-asigneeId" name="asigneeId" >
+        <input type="text" id="task-create-form-status" name="status" >
+        <input type="text" id="task-create-form-creatorId" name="creatorId" >
     </form>
     <div class="modal" id="task-modal-create">
         <div class="modal-background"></div>
@@ -848,6 +853,7 @@
                 <div class="columns is-multiline is-centered">
                     <% item = 0; %>
                     <% for(const obj of data.users) { %>
+                        <% if(!obj.IsDeleted) { %>
                         <div class="column is-one-quarter project is-centered pan" onclick="selectedItem=this.id.substring(4,this.id.length); console.log(selectedItem); $('#task-create-modal-user').html(users[selectedItem].FirstName+' '+users[selectedItem].LastName); $('#task-modal-create-select-user').removeClass('is-active'); $('#task-modal-create').addClass('is-active')"
                             id="tap-<%= item %>">
                             <div class="box project-box">
@@ -858,6 +864,228 @@
                         </div>
                     <% item++; %>
                     <% } %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <form id="team-form-create" method="post" action="/create-team" style="display: none;">
+        <input type="text" id="team-form-create-title" name="title">
+        <input type="text" id="team-form-create-users" name="users">
+    </form>
+    <div class="modal" id="team-modal-create">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick="$('#team-modal-create').removeClass('is-active');">X</button>
+                    </div>
+                </div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <p class="title">Create new team</p>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                          <label class="label">Title: </label>
+                        </div>
+                        <div class="field-body">
+                          <div class="field">
+                            <p class="control">
+                              <input class="input" id="team-create-title" type="text" placeholder="Team title">
+                            </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns">
+                    <div class="column has-text-centered">
+                        
+                        <button class="button is-success is-outlined" onclick="$('#team-modal-create').removeClass('is-active'); $('#team-modal-create-select-users').addClass('is-active');">
+                            <span class="icon is-small">
+                                <i class="far fa-hand-pointer"></i>
+                            </span>
+                            <span>Select</span>
+                        </button>
+                        <p class="label is-inline is-normal">Users:  </p> <span id="team-create-users"></span>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <button class="button is-success" id="project-create-btn" onclick="submitCreateTeam()">
+                            <span class="icon is-small">
+                              <i class="fas fa-check"></i>
+                            </span>
+                            <span>Save</span>
+                          </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="modal" id="team-modal-create-select-users">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick="$('.selected-item').removeClass('selected-item'); $('#team-modal-create-select-users').removeClass('is-active'); $('#team-modal-create').addClass('is-active');">Back</button>
+                    </div>
+                </div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <p class="title">Select users</p>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <button class="button is-success is-outlined" onclick="saveTeam()">
+                            <span class="icon is-small">
+                              <i class="fas fa-check"></i>
+                            </span>
+                            <span>Save</span>
+                          </button>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-multiline is-centered ">
+                    <% item=0 %>
+                        <% for(const obj of data.users) {%>
+                            <% if(!obj.IsDeleted) { %>
+                            <div class="column is-one-quarter project is-centered pan" onclick="selectedItem=this.id; $('#'+selectedItem).toggleClass('selected-item')"
+                                id="teu-<%= item %>">
+                                <div class="box project-box">
+                                    <p class="title has-text-centered has-text-light">
+                                        <%= obj.FirstName%> <%= obj.LastName %>
+                                    </p>
+                                </div>
+                            </div>
+                            <% item++ %>
+                            <% } %>
+                        <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <form id="user-create-form" action="/create-user" method="POST" style="display: none;">
+        <input type="text" id="user-create-form-username" name="username">
+        <input type="text" id="user-create-form-password" name="password">
+        <input type="text" id="user-create-form-first-name" name="firstName">
+        <input type="text" id="user-create-form-last-name" name="lastName">
+        <input type="text" id="user-create-form-is-admin" name="isAdmin">
+    </form>
+    <div class="modal" id="user-modal-create">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick="$('#user-modal-create').removeClass('is-active'); selectedItem=-1">X</button>
+                    </div>
+                </div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <p class="title">Crate new user</p>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                          <label class="label">Username: </label>
+                        </div>
+                        <div class="field-body">
+                          <div class="field">
+                            <p class="control">
+                              <input class="input" id="user-create-username" type="text" placeholder="Username">
+                            </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                          <label class="label">Password: </label>
+                        </div>
+                        <div class="field-body">
+                          <div class="field">
+                            <p class="control">
+                              <input class="input" id="user-create-password" type="password" placeholder="Password">
+                            </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                          <label class="label">Firstname: </label>
+                        </div>
+                        <div class="field-body">
+                          <div class="field">
+                            <p class="control">
+                              <input class="input" id="user-create-first-name" type="text" placeholder="First name">
+                            </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                          <label class="label">Lastname: </label>
+                        </div>
+                        <div class="field-body">
+                          <div class="field">
+                            <p class="control">
+                              <input class="input" id="user-create-last-name" type="text" placeholder="Last name">
+                            </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered has-text-centered">
+                    <div class="column is-centered has-text-centered">
+                        <span class="label">Is administrator:</span>
+                        <div class="select" >
+                            <select id="user-create-is-admin">
+                              <option value="1">True</option>
+                              <option value="0">False</option>
+                            </select>
+                          </div>
+                    </div>  
+                </div>
+                <div class="level"></div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <button class="button is-success" id="user-create-btn" onclick="submitCreateUser()">
+                            <span class="icon is-small">
+                              <i class="fas fa-check"></i>
+                            </span>
+                            <span>Save</span>
+                          </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1019,6 +1247,26 @@
         const creator = users.filter(user=>user.Id == tasks[id].CreatorId)[0];
         const lastUpdateUser = users.filter(user=>user.Id == tasks[id].LatestChangeUserId)[0];
         const worklogsOfTask = worklogs.filter(worklog => worklog.TaskId == tasks[id].Id);
+        console.log(worklogsOfTask);
+        let str="";
+        let count=0;
+        for(const log of worklogsOfTask) {
+            let logCreator = users.filter(user=> user.Id==log.CreatorId)[0];
+            str+=`<div class="column is-half project is-centered pan" id="w-${count}">
+                <div class="box project-box">
+                    <p class="has-text-centered has-text-light">
+                        Made by: ${logCreator.FirstName} ${logCreator.LastName}
+                    </p>
+                    <p class="has-text-centered has-text-light">
+                        Time spent: ${log.Time}
+                    </p>
+                    <p class="has-text-centered has-text-light">
+                        Made on: ${log.Date.substring(0,10)}
+                    </p>
+                </div>
+            </div>`;
+            count++;
+        }
         // FINISH WORKLOGS
 
         console.log();
@@ -1031,7 +1279,7 @@
         $("#task-modal-creator").html(creator.FirstName+" "+creator.LastName);
         $("#task-modal-last-update-date").html(tasks[id].DateOfLastChange.substring(0,10));
         $("#task-modal-last-update-user").html(lastUpdateUser.FirstName+" "+lastUpdateUser.LastName);
-        $("#task-modal-worklogs").html();
+        $("#task-modal-worklogs").html(str);
     }
 
     async function openTeam(id) {
@@ -1088,6 +1336,71 @@
         console.log(id);
         await fetch(`/delete-task/${id}`, { method:"POST" });
         window.location.reload();
+    }
+
+    async function deleteTeam(id) {
+        id=parseInt(id.substr(3,id.length));
+        
+        id=teams[id].Id;
+        console.log(id);
+        await fetch(`/delete-team/${id}`, { method:"POST" });
+        window.location.reload();
+    }
+
+    async function deleteUser(id) {
+        id=parseInt(id.substr(2,id.length));
+        
+        id=users[id].Id;
+        console.log(id);
+        await fetch(`/delete-user/${id}`, { method:"POST" });
+        window.location.reload();
+    }
+
+    function saveTeam() {
+        var all = $(".selected-item");
+        let ids = [];
+        let str="";
+        console.log(all);
+        for(let item=0; item<all.length;item++) {
+            if(all[item].id.substr(0,4)=="teu-")
+                ids.push(parseInt(all[item].id.substring(4,all[item].id.length)));
+        }
+        for(let item of ids) {
+            str+=users[item].FirstName+' '+users[item].LastName+', ';
+        }
+        str = str.substr(0,str.length-2);
+
+        $("#team-modal-create-select-users").removeClass("is-active");
+        $("#team-modal-create").addClass("is-active");
+        $("#team-create-users").html(str);
+    }
+
+    function submitCreateTeam() {
+        const form = $("#team-form-create");
+        const usersOfTeam = $("#team-create-users").html();
+        let userArr = usersOfTeam.split(", ");
+        let ids = [];
+        for(const item of userArr) {
+            ids.push(users.filter(x=> x.FirstName+" "+x.LastName==item)[0].Id.toString());
+        }
+        console.log(ids);
+        $("#team-form-create-title").val($("#team-create-title").val());
+        $("#team-form-create-users").val(ids);
+        console.log($("#team-form-create-users").val());
+        form.submit();
+    }
+
+    function submitCreateUser() {
+        const form = $("#user-create-form");
+        var e = document.getElementById("user-create-is-admin");
+        var status = e.options[e.selectedIndex].value;
+        $("#user-create-form-username").val($("#user-create-username").val());
+        $("#user-create-form-password").val($("#user-create-password").val());
+        $("#user-create-form-first-name").val($("#user-create-first-name").val());
+        $("#user-create-form-last-name").val($("#user-create-last-name").val());
+        $("#user-create-form-is-admin").val(status);
+
+        form.submit();
     }
 
     function showPassword(id) {

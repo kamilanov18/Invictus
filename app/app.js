@@ -209,3 +209,48 @@ app.post("/delete-user/:id", async(req,res)=>{
     await DBM.deleteUser(id);
     res.sendStatus(204);
 })
+
+app.post("/update-user", async(req,res)=>{
+    const newUser = req.body;
+    await DBM.updateUser(parseInt(newUser.userId),newUser,req.session.userId);
+    res.redirect("/admin");
+})
+
+app.post("/update-team",async(req,res)=>{
+    let newTeam = req.body;
+    newTeam.users=newTeam.users.split(",");
+    console.log(newTeam);
+    await DBM.updateTeam(newTeam.teamId,newTeam.title,req.session.userId);
+    await DBM.updateUsersInTeam(newTeam.users,newTeam.teamId);
+    res.redirect("/admin");
+})
+
+app.post("/update-task", async(req,res)=>{
+    let newTask = req.body;
+    console.log(newTask);
+    await DBM.updateTask(newTask.taskId,newTask,req.session.userId);
+    res.redirect("/admin");
+})
+
+app.post("/create-worklog",async(req,res)=>{
+    let worklog = req.body;
+    worklog.creatorId=req.session.userId;
+    await DBM.createWorklog(worklog);
+    console.log(worklog);
+    res.redirect("/admin");
+})
+
+app.post("/delete-worklog/:id",async(req,res)=>{
+    let id = req.params.id;
+    await DBM.deleteWorklog(id);
+    res.sendStatus(204);
+})
+
+app.post("/update-worklog", async (req,res)=>{
+    let worklog = req.body;
+    worklog.worklogId=parseInt(worklog.worklogId);
+    worklog.time=parseInt(worklog.time);
+    console.log(worklog);
+    await DBM.updateWorklog(worklog.worklogId,worklog);
+    res.redirect("/admin");
+})

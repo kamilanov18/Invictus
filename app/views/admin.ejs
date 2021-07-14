@@ -587,7 +587,17 @@
                     <p class="subtitle has-text-centered"><b>Last updated on:</b> <span id="task-modal-last-update-date"></span></p>
                     <p class="subtitle has-text-centered"><b>Last changed by:</b> <span id="task-modal-last-update-user"></span></p>
                     <p class="subtitle has-text-centered"><b>Worklogs assigned to this task:</b>
-                    <div class="columns" id="task-modal-worklogs">
+                    <div class="columns has-text-centered">
+                        <div class="column">
+                            <button class="button is-success add-btn" onclick="$('#task-modal').removeClass('is-active'); $('#worklog-modal-create').addClass('is-active')">
+                                <span class="icon is-small">
+                                    <i class="fas fa-plus"></i>
+                                </span>
+                                <span>Add</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="columns is-multiline" id="task-modal-worklogs">
 
                     </div>
             </div>
@@ -619,7 +629,7 @@
                         <p class="title has-text-centered" id="team-modal-title">testTitle</p>
                     </div>
                     <div class="column has-text-centered">
-                        <button class="button is-link is-outlined" onclick="$('#team-modal').removeClass('is-active'); editTeam();">
+                        <button class="button is-link is-outlined" onclick="$('#team-modal').removeClass('is-active'); $('#team-modal-update').addClass('is-active'); editTeam();">
                             <span class="icon is-small">
                                 <i class="fas fa-pencil-alt"></i>
                             </span>
@@ -662,7 +672,7 @@
                         <p class="title has-text-centered" id="user-modal-names">testNames</p>
                     </div>
                     <div class="column has-text-centered">
-                        <button class="button is-link is-outlined" onclick="$('#user-modal').removeClass('is-active'); editUser();">
+                        <button class="button is-link is-outlined" onclick="$('#user-modal').removeClass('is-active'); $('#user-modal-update').addClass('is-active'); editUser();">
                             <span class="icon is-small">
                                 <i class="fas fa-pencil-alt"></i>
                             </span>
@@ -1093,9 +1103,564 @@
     </div>
 </section>
 
+<section>
+    <form id="user-update-form" action="/update-user" method="POST" style="display: none;">
+        <input type="text" id="user-update-form-username" name="username">
+        <input type="text" id="user-update-form-password" name="password">
+        <input type="text" id="user-update-form-first-name" name="firstName">
+        <input type="text" id="user-update-form-last-name" name="lastName">
+        <input type="text" id="user-update-form-is-admin" name="isAdmin">
+        <input type="text" id="user-update-form-user-id" name="userId">
+    </form>
+    <div class="modal" id="user-modal-update">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick="$('#user-modal-update').removeClass('is-active'); selectedItem=-1; $('#user-modal').addClass('is-active')">Back</button>
+                    </div>
+                </div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <p class="title">Update user</p>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                          <label class="label">Username: </label>
+                        </div>
+                        <div class="field-body">
+                          <div class="field">
+                            <p class="control">
+                              <input class="input" id="user-update-username" type="text" placeholder="Username">
+                            </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                          <label class="label">Password: </label>
+                        </div>
+                        <div class="field-body">
+                          <div class="field">
+                            <p class="control">
+                              <input class="input" id="user-update-password" type="password" placeholder="Password">
+                            </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                          <label class="label">Firstname: </label>
+                        </div>
+                        <div class="field-body">
+                          <div class="field">
+                            <p class="control">
+                              <input class="input" id="user-update-first-name" type="text" placeholder="First name">
+                            </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                          <label class="label">Lastname: </label>
+                        </div>
+                        <div class="field-body">
+                          <div class="field">
+                            <p class="control">
+                              <input class="input" id="user-update-last-name" type="text" placeholder="Last name">
+                            </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered has-text-centered">
+                    <div class="column is-centered has-text-centered">
+                        <span class="label">Is administrator:</span>
+                        <div class="select" >
+                            <select id="user-update-is-admin">
+                              <option value="1">True</option>
+                              <option value="0">False</option>
+                            </select>
+                          </div>
+                    </div>  
+                </div>
+                <div class="level"></div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <button class="button is-success" id="user-create-btn" onclick="submitEditUser()">
+                            <span class="icon is-small">
+                              <i class="fas fa-check"></i>
+                            </span>
+                            <span>Save</span>
+                          </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <form id="team-form-update" method="post" action="/update-team" style="display: none;">
+        <input type="text" id="team-form-update-title" name="title">
+        <input type="text" id="team-form-update-users" name="users">
+        <input type="text" id="team-form-update-team-id" name="teamId">
+    </form>
+    <div class="modal" id="team-modal-update">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick="$('#team-modal-update').removeClass('is-active'); $('#team-modal').addClass('is-active')">Back</button>
+                    </div>
+                </div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <p class="title">Update team</p>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                          <label class="label">Title: </label>
+                        </div>
+                        <div class="field-body">
+                          <div class="field">
+                            <p class="control">
+                              <input class="input" id="team-update-title" type="text" placeholder="Team title">
+                            </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns">
+                    <div class="column has-text-centered">
+                        <button class="button is-link is-outlined" onclick="$('#team-modal-update').removeClass('is-active'); $('#team-modal-update-select-users').addClass('is-active');">
+                            <span class="icon is-small">
+                                <i class="fas fa-pencil-alt"></i>
+                            </span>
+                        </button>
+                        <p class="label is-inline is-normal">Users:  </p> <span id="team-update-users"></span>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <button class="button is-success" id="project-create-btn" onclick="submitEditTeam()">
+                            <span class="icon is-small">
+                              <i class="fas fa-check"></i>
+                            </span>
+                            <span>Save</span>
+                          </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="modal" id="team-modal-update-select-users">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick="$('.selected-item').removeClass('selected-item'); $('#team-modal-update-select-users').removeClass('is-active'); $('#team-modal-update').addClass('is-active');">Back</button>
+                    </div>
+                </div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <p class="title">Select users</p>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <button class="button is-success is-outlined" onclick="saveTeamUpdateUsers()">
+                            <span class="icon is-small">
+                              <i class="fas fa-check"></i>
+                            </span>
+                            <span>Save</span>
+                          </button>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-multiline is-centered ">
+                    <% item=1 %>
+                        <% for(const obj of data.users) {%>
+                            <% if(!obj.IsDeleted) { %>
+                            <div class="column is-half project is-centered pan" onclick="selectedItem=this.id; $('#'+selectedItem).toggleClass('selected-item')"
+                                id="teuu-<%= item %>">
+                                <div class="box project-box">
+                                    <p class="title has-text-centered has-text-light">
+                                        <%= obj.FirstName%> <%= obj.LastName %>
+                                    </p>
+                                </div>
+                            </div>
+                            <% item++ %>
+                            <% } %>
+                        <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <form id="task-update-form" method="POST", action="/update-task" style="visibility:hidden;">
+        <input type="text" id="task-update-form-title" name="title" >
+        <input type="text" id="task-update-form-description" name="description">
+        <input type="text" id="task-update-form-projectId" name="projectId">
+        <input type="text" id="task-update-form-asigneeId" name="asigneeId" >
+        <input type="text" id="task-update-form-status" name="status" >
+        <input type="text" id="task-update-task-id" name="taskId" >
+    </form>
+    <div class="modal" id="task-modal-update">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick="$('#task-modal-update').removeClass('is-active'); selectedItem=-1; $('#task-modal').addClass('is-active')">Back</button>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column">
+                        <p class="title has-text-centered">Update Task</p>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                          <label class="label">Title: </label>
+                        </div>
+                        <div class="field-body">
+                          <div class="field">
+                            <p class="control">
+                              <input class="input" id="task-update-title" type="text" placeholder="Task title">
+                            </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered">
+                    <div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                          <label class="label">Description: </label>
+                        </div>
+                        <div class="field-body">
+                          <div class="field">
+                            <p class="control">
+                              <input class="input" id="task-update-description" type="text" placeholder="Task description">
+                            </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="columns is-centered has-text-centered">
+                    <div class="column is-centered has-text-centered">
+                        <span class="label">Status:</span>
+                        <div class="select" >
+                            <select id="task-update-status">
+                              <option value="Backlog">Backlog</option>
+                              <option value="In progress">In progress</option>
+                              <option value="Done">Done</option>
+                            </select>
+                          </div>
+                    </div>  
+                </div>
+                <div class="columns">
+                    <div class="column has-text-centered">
+                        
+                        <button class="button is-link is-outlined" onclick="$('#task-modal-update').removeClass('is-active'); $('#task-modal-update-select-project').addClass('is-active');">
+                            <span class="icon is-small">
+                                <i class="fas fa-pencil-alt"></i>
+                            </span>
+
+                        </button>
+                        <p class="label is-inline is-normal">Belongs to project:  </p> <span id="task-update-modal-project"></span>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column has-text-centered">
+                        
+                        <button class="button is-link is-outlined" onclick="$('#task-modal-update').removeClass('is-active'); $('#task-modal-update-select-user').addClass('is-active');">
+                            <span class="icon is-small">
+                                <i class="fas fa-pencil-alt"></i>
+                            </span>
+
+                        </button>
+                        <p class="label is-inline is-normal">Assign to user:  </p> <span id="task-update-modal-user"></span>
+                    </div>
+                </div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <button class="button is-success" id="project-create-btn" onclick="submitEditTask()">
+                            <span class="icon is-small">
+                              <i class="fas fa-check"></i>
+                            </span>
+                            <span>Save</span>
+                          </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="modal" id="task-modal-update-select-user">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick="$('#task-modal-update-select-user').removeClass('is-active'); $('#task-modal-update').addClass('is-active')">Back</button>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column has-text-centered">
+                        <p class="title">Select a user to assign this task to: </p>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-multiline is-centered">
+                    <% item = 1; %>
+                    <% for(const obj of data.users) { %>
+                        <% if(!obj.IsDeleted) { %>
+                        <div class="column is-half project is-centered pan" onclick="selectedItem=this.id.substring(4,this.id.length); console.log(selectedItem); $('#task-update-modal-user').html(users[selectedItem].FirstName+' '+users[selectedItem].LastName); $('#task-modal-update-select-user').removeClass('is-active'); $('#task-modal-update').addClass('is-active')"
+                            id="tap-<%= item %>">
+                            <div class="box project-box">
+                                <p class="title has-text-centered has-text-light">
+                                    <%= obj.FirstName%> <%= obj.LastName%>
+                                </p>
+                            </div>
+                        </div>
+                    <% item++; %>
+                    <% } %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="modal" id="task-modal-update-select-project">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick="$('#task-modal-update-select-project').removeClass('is-active'); $('#task-modal-update').addClass('is-active')">Back</button>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column has-text-centered">
+                        <p class="title">Select a project to assign this task to: </p>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-multiline is-centered">
+                    <% item = 0; %>
+                    <% for(const obj of data.projects) { %>
+                        <div class="column is-half project is-centered pan" onclick="selectedItem=this.id.substring(4,this.id.length); console.log(selectedItem); $('#task-update-modal-project').html(projects[selectedItem].Title); $('#task-modal-update-select-project').removeClass('is-active'); $('#task-modal-update').addClass('is-active')"
+                            id="tap-<%= item %>">
+                            <div class="box project-box">
+                                <p class="title has-text-centered has-text-light">
+                                    <%= obj.Title%>
+                                </p>
+                            </div>
+                        </div>
+                    <% item++; %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="modal" id="worklog-modal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick='$("#worklog-modal").removeClass("is-active"); $("#task-modal").addClass("is-active")'>Back</button>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column has-text-centered">
+
+                            <button id="deleteButton" class="button is-danger is-outlined" onclick="deleteWorklog(selectedWorklog)">
+                                <span class="icon is-small">
+                                    <i class="fas fa-times"></i>
+                                </span>
+                                <span>Delete</span>
+                            </button>
+
+                    </div>
+                    <div class="column">
+                        <p class="title has-text-centered" id="worklog-modal-title">Worklog</p>
+                    </div>
+                    <div class="column has-text-centered">
+                        <button class="button is-link is-outlined" onclick="editWorklog()">
+                            <span class="icon is-small">
+                                <i class="fas fa-pencil-alt"></i>
+                            </span>
+                            <span>Edit</span>
+                        </button>
+                    </div>
+                </div>
+                <p class="subtitle has-text-centered"><b>Created on:</b> <span id="worklog-modal-date-of-creation">testDate</span></p>
+                <p class="subtitle has-text-centered"><b>Created by:</b> <span id="worklog-modal-creator"></span></p>
+                <p class="subtitle has-text-centered"><b>Time:</b> <span id="worklog-modal-time"></span></p>
+                <p class="subtitle has-text-centered"><b>Belongs to task:</b> <span id="worklog-modal-task"></span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <form id="worklog-form-create" method="POST" action="create-worklog" style="display: none;">
+        <input type="text" id="worklog-form-create-time" name="time">
+        <input type="text" id="worklog-form-create-task-id" name="taskId">
+    </form>
+    <div class="modal" id="worklog-modal-create">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick='$("#worklog-modal-create").removeClass("is-active"); $("#task-modal").addClass("is-active")'>Back</button>
+                    </div>
+                </div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <p class="title">Create new worklog</p>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered has-text-centered">
+                    <div class="column is-centered has-text-centered">
+                        <span class="label">Hours:</span>
+                        <div class="select" >
+                            <select id="worklog-create-hours">
+                                <% for(item=0;item<25;item++) { %>
+                              <option value="<%= item %>"><%= item %></option>
+                              <% } %>
+                            </select>
+                          </div>
+                    </div>  
+
+                    <div class="column is-centered has-text-centered">
+                        <span class="label">Minutes:</span>
+                        <div class="select" >
+                            <select id="worklog-create-minutes">
+                                <% for(item=1;item<60;item++) { %>
+                              <option value="<%= item %>"><%= item %></option>
+                              <% } %>
+                            </select>
+                          </div>
+                    </div>  
+                </div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <button class="button is-success" id="project-create-btn" onclick="submitCreateWorklog()">
+                            <span class="icon is-small">
+                              <i class="fas fa-check"></i>
+                            </span>
+                            <span>Save</span>
+                          </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+    
+<section>
+    <form id="worklog-form-update" method="POST" action="update-worklog" style="display: none;">
+        <input type="text" id="worklog-form-update-time" name="time">
+        <input type="text" id="worklog-form-update-worklog-id" name="worklogId">
+    </form>
+    <div class="modal" id="worklog-modal-update">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button" onclick='$("#worklog-modal-update").removeClass("is-active"); $("#worklog-modal").addClass("is-active")'>Back</button>
+                    </div>
+                </div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <p class="title">Update worklog</p>
+                    </div>
+                </div>
+                <div class="level"></div>
+                <div class="columns is-centered has-text-centered">
+                    <div class="column is-centered has-text-centered">
+                        <span class="label">Hours:</span>
+                        <div class="select" >
+                            <select id="worklog-update-hours">
+                                <% for(item=0;item<25;item++) { %>
+                              <option value="<%= item %>"><%= item %></option>
+                              <% } %>
+                            </select>
+                          </div>
+                    </div>  
+
+                    <div class="column is-centered has-text-centered">
+                        <span class="label">Minutes:</span>
+                        <div class="select" >
+                            <select id="worklog-update-minutes">
+                                <% for(item=1;item<60;item++) { %>
+                              <option value="<%= item %>"><%= item %></option>
+                              <% } %>
+                            </select>
+                          </div>
+                    </div>  
+                </div>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <button class="button is-success" id="project-create-btn" onclick="submitEditWorklog()">
+                            <span class="icon is-small">
+                              <i class="fas fa-check"></i>
+                            </span>
+                            <span>Save</span>
+                          </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 </body>
 <script>
-    var selectedItem, selectedProject, selectedTask, selectedTeam, selectedUser;
+    var selectedItem, selectedProject, selectedTask, selectedTeam, selectedUser, selectedWorklog;
 
     let projects = <%- JSON.stringify(data.projects) %>;
     let users = <%- JSON.stringify(data.users) %>;
@@ -1109,8 +1674,8 @@
         $("#project-modal").addClass("is-active");
         $("#project-modal-title").html(projects[id].Title);
         $("#project-modal-description").html(projects[id].Description);
-        $("#project-modal-date-of-creation").html(projects[id].DateOfCreation.substring(0, 10));
-        $("#project-modal-last-update-date").html(projects[id].DateOfLastChange.substring(0, 10));
+        $("#project-modal-date-of-creation").html(convertDate(projects[id].DateOfCreation));
+        $("#project-modal-last-update-date").html(convertDate(projects[id].DateOfLastChange));
 
         const { CreatorId, LatestChangeUserId, Id } = projects.filter(project => project.Id === projects[id].Id)[0];
         let {FirstName, LastName } = users.filter(user => user.Id === CreatorId)[0];
@@ -1197,10 +1762,86 @@
         $("#form-update-project").submit();
     }
 
+    function submitEditUser() {
+        const form = $("#user-update-form");
+        $("#user-update-form-username").val($("#user-update-username").val());
+        $("#user-update-form-password").val($("#user-update-password").val());
+        $("#user-update-form-first-name").val($("#user-update-first-name").val());
+        $("#user-update-form-last-name").val($("#user-update-last-name").val());
+        $("#user-update-form-is-admin").val($("#user-update-is-admin").val());
+        $("#user-update-form-user-id").val(users[selectedUser].Id);
+
+        console.log(form);
+
+        form.submit();
+    }
+
+    function submitEditTeam() {
+        /*
+        <form id="team-form-update" method="post" action="/update-team" style="display: none;">
+        <input type="text" id="team-form-update-title" name="title">
+        <input type="text" id="team-form-update-users" name="users">
+        <input type="text" id="team-form-update-user-id" name="userId">
+    </form>
+        */
+        const form = $("#team-form-update");
+        let usersOfTeam = $("#team-update-users").html();
+        let userArr = usersOfTeam.split(", ");
+        let ids = [];
+        for(const item of userArr) {
+            ids.push(users.filter(x=> x.FirstName+" "+x.LastName==item)[0].Id.toString());
+        }
+        console.log(ids);
+
+       $("#team-form-update-title").val($("#team-update-title").val())
+       $("#team-form-update-users").val(ids);
+       $("#team-form-update-team-id").val(teams[selectedTeam].Id)
+
+       form.submit();
+    }
+
+    function submitEditTask() {
+        const form = $("#task-update-form");
+        let projectId = projects.filter(prj=> prj.Title == $("#task-update-modal-project").html())[0].Id;
+        let userId = users.filter(usr=> usr.FirstName+" "+usr.LastName == $("#task-update-modal-user").html())[0].Id;
+
+        $("#task-update-form-title").val($("#task-update-title").val());
+        $("#task-update-form-description").val($("#task-update-description").val());
+        $("#task-update-form-projectId").val(projectId);
+        $("#task-update-form-asigneeId").val(userId);
+        $("#task-update-form-status").val(convertStringToStatus($("#task-update-status").val()));
+        $("#task-update-task-id").val(tasks[selectedTask].Id);
+
+       form.submit();
+    }
+
+    function submitEditWorklog() {
+        const form = $("#worklog-form-update");
+        const minutes = $("#worklog-update-minutes").val();
+        const hours = $("#worklog-update-hours").val()*60;
+        console.log(worklogs[selectedWorklog]);
+
+        $("#worklog-form-update-time").val(parseInt(minutes)+parseInt(hours));
+        $("#worklog-form-update-worklog-id").val(worklogs[selectedWorklog].Id);
+
+        form.submit();
+    }
+
     function submitProject() {
         const title = $("#iproject-create-title").val();
         
         $("#project-create-btn")
+    }
+
+    function submitCreateWorklog() {
+        selectedTask=selectedTask.substring(3,selectedTask.length);
+        console.log(selectedTask);
+        const form = $("#worklog-form-create");
+        let time = parseInt($("#worklog-create-minutes").val())+parseInt($("#worklog-create-hours").val()*60);
+        $("#worklog-form-create-time").val(time);
+        $("#worklog-form-create-task-id").val(tasks[selectedTask].Id);
+
+        form.submit();
     }
 
     function editProjectTeams() {
@@ -1242,6 +1883,49 @@
         $("#project-modal-edit").addClass("is-active");
     }
 
+    function editUser() {
+        selectedUser=selectedUser.substring(2,selectedUser.length);
+        $("#user-update-username").val(users[selectedUser].Username);
+        $("#user-update-password").val(users[selectedUser].Password);
+        $("#user-update-first-name").val(users[selectedUser].FirstName);
+        $("#user-update-last-name").val(users[selectedUser].LastName);
+        console.log(users[selectedUser].IsAdmin);
+        $("#user-update-is-admin").val(convertIsAdminToString(users[selectedUser].IsAdmin));
+    }
+
+    function editTask() {
+        selectedTask=selectedTask.substring(3,selectedTask.length);
+        $("#task-modal-update").addClass("is-active");
+        $("#task-update-title").val(tasks[selectedTask].Title);
+        $("#task-update-description").val(tasks[selectedTask].Description);
+        $("#task-update-status").val(convertStatusToString(tasks[selectedTask].Status));
+        $("#task-update-modal-project").html($("#task-modal-project").html());
+        $("#task-update-modal-user").html($("#task-modal-asignee").html());
+    }
+
+    function editWorklog() {
+        selectedWorklog=selectedWorklog.substring(2,selectedWorklog.length);
+        $('#worklog-modal').removeClass('is-active'); 
+        $('#worklog-modal-update').addClass('is-active');
+        $("#worklog-update-hours").val(parseInt(worklogs[selectedWorklog].Time/60));
+        $("#worklog-update-minutes").val(worklogs[selectedWorklog].Time%60);
+    }
+
+    async function editTeam() {
+        selectedTeam=selectedTeam.substring(3,selectedTeam.length);
+        $("#team-update-title").val(teams[selectedTeam].Title);
+        let usersInTeam = await fetch(`/get-team-users/${teams[selectedTeam].Id}`);
+        usersInTeam= await usersInTeam.json();
+        console.log(usersInTeam);
+        let str="";
+        for(const user of usersInTeam) {
+            str+=user[0].FirstName+" "+user[0].LastName+", ";
+        }
+        str=str.substring(0,str.length-2);
+        console.log(str);
+        $("#team-update-users").html(str);
+    }
+
     async function openTask(id) {
         $("#task-modal").addClass("is-active");
         const asignee = users.filter(user=>user.Id == tasks[id].AsigneeId)[0];
@@ -1253,16 +1937,16 @@
         let count=0;
         for(const log of worklogsOfTask) {
             let logCreator = users.filter(user=> user.Id==log.CreatorId)[0];
-            str+=`<div class="column is-half project is-centered pan" id="w-${count}">
+            str+=`<div class="column is-half project is-centered pan" id="w-${count}" onclick="selectedWorklog=this.id; openWorklog(selectedWorklog)">
                 <div class="box project-box">
                     <p class="has-text-centered has-text-light">
                         Made by: ${logCreator.FirstName} ${logCreator.LastName}
                     </p>
                     <p class="has-text-centered has-text-light">
-                        Time spent: ${log.Time}
+                        Time spent: ${convertTime(log.Time)}
                     </p>
                     <p class="has-text-centered has-text-light">
-                        Made on: ${log.Date.substring(0,10)}
+                        Made on: ${convertDate(log.Date)}
                     </p>
                 </div>
             </div>`;
@@ -1276,11 +1960,25 @@
         $("#task-modal-asignee").html(asignee.FirstName+" "+asignee.LastName);
         $("#task-modal-description").html(tasks[id].Description);
         $("#task-modal-status").html(convertStatusToString(tasks[id].Status));
-        $("#task-modal-date-of-creation").html(tasks[id].DateOfCreation.substring(0,10));
+        $("#task-modal-date-of-creation").html(convertDate(tasks[id].DateOfCreation));
         $("#task-modal-creator").html(creator.FirstName+" "+creator.LastName);
-        $("#task-modal-last-update-date").html(tasks[id].DateOfLastChange.substring(0,10));
+        $("#task-modal-last-update-date").html(convertDate(tasks[id].DateOfLastChange));
         $("#task-modal-last-update-user").html(lastUpdateUser.FirstName+" "+lastUpdateUser.LastName);
         $("#task-modal-worklogs").html(str);
+    }
+
+    function openWorklog(id) {
+        id=id.substring(2,id.length);
+        $("#task-modal").removeClass("is-active");
+        $("#worklog-modal").addClass("is-active");
+        const taskTitle = tasks.filter(task => task.Id == worklogs[id].TaskId)[0].Title;
+        const creator = users.filter(usr=> usr.Id == worklogs[id].CreatorId)[0];
+        $("#worklog-modal-date-of-creation").html(convertDate(worklogs[id].Date));
+        $("#worklog-modal-creator").html(creator.FirstName+" "+creator.LastName);
+        $("#worklog-modal-time").html(convertTime(worklogs[id].Time));
+        $("#worklog-modal-task").html(taskTitle);
+        
+        console.log(id);
     }
 
     async function openTeam(id) {
@@ -1301,9 +1999,9 @@
 
         console.log(obj);
         $("#team-modal-title").html(teams[id].Title)
-        $("#team-modal-date-of-creation").html(teams[id].DateOfCreation.substring(0,10));
+        $("#team-modal-date-of-creation").html(convertDate(teams[id].DateOfCreation));
         $("#team-modal-creator").html(creator.FirstName+" "+creator.LastName);
-        $("#team-modal-last-update-date").html(teams[id].DateOfLastChange.substring(0,10));
+        $("#team-modal-last-update-date").html(convertDate(teams[id].DateOfLastChange));
         $("#team-modal-last-update-user").html(lastUpdateUser.FirstName+" "+lastUpdateUser.LastName);
         $("#team-modal-users").html(str);
     }
@@ -1319,9 +2017,9 @@
         $("#user-modal-first-name").html(users[id].FirstName);
         $("#user-modal-last-name").html(users[id].LastName);
         $("#user-modal-password").html(str.repeat(users[id].Password.length));
-        $("#user-modal-date-of-creation").html(users[id].DateOfCreation.substring(0,10));
+        $("#user-modal-date-of-creation").html(convertDate(users[id].DateOfCreation));
         $("#user-modal-creator").html(creator.FirstName+" "+creator.LastName);
-        $("#user-modal-last-update-date").html(users[id].DateOfLastChange.substring(0,10));
+        $("#user-modal-last-update-date").html(convertDate(users[id].DateOfLastChange));
         $("#user-modal-last-update-user").html(lastUpdateUser.FirstName+" "+lastUpdateUser.LastName);
         $("#user-modal-is-admin").html(users[id].IsAdmin);
     }
@@ -1357,6 +2055,17 @@
         window.location.reload();
     }
 
+    async function deleteWorklog(id) {
+        console.log(id);
+        id=parseInt(id.substr(2,id.length));
+        console.log(id);
+        id=worklogs[id].Id;
+        console.log(id);
+        
+        await fetch(`/delete-worklog/${id}`, { method:"POST" });
+        window.location.reload();
+    }
+
     function saveTeam() {
         var all = $(".selected-item");
         let ids = [];
@@ -1374,6 +2083,25 @@
         $("#team-modal-create-select-users").removeClass("is-active");
         $("#team-modal-create").addClass("is-active");
         $("#team-create-users").html(str);
+    }
+
+    function saveTeamUpdateUsers() {
+        var all = $(".selected-item");
+        let ids = [];
+        let str="";
+        console.log(all);
+        for(let item=0; item<all.length;item++) {
+            if(all[item].id.substr(0,5)=="teuu-")
+                ids.push(parseInt(all[item].id.substring(5,all[item].id.length)));
+        }
+        for(let item of ids) {
+            str+=users[item].FirstName+' '+users[item].LastName+', ';
+        }
+        str = str.substr(0,str.length-2);
+
+        $("#team-modal-update-select-users").removeClass("is-active");
+        $("#team-modal-update").addClass("is-active");
+        $("#team-update-users").html(str);
     }
 
     function submitCreateTeam() {
@@ -1415,6 +2143,32 @@
             case 2: return "In progress"; break;
             case 3: return "Done"; break;
         }
+    }
+
+    function convertStringToStatus(string) {
+        switch(string) {
+            case "Backlog": return 1;
+            case "In progress": return 2;
+            case "Done": return 3;
+        }
+    }
+
+    function convertIsAdminToString(statement) {
+        if(statement)
+            return "1";
+        return "0";
+    }
+
+    function convertDate(date) {
+        let year = date.substring(0,4);
+        let month = date.substring(5,7);
+        let day = date.substring(8,10);
+        let hours = date.substring(11,16);
+        return day+"."+month+"."+year+" "+hours;
+    }
+
+    function convertTime(minutes) {
+        return parseInt(minutes/60)+" Hours and "+parseInt(minutes%60)+" Minutes";
     }
 
     const deleteProject = $("#delete-project");

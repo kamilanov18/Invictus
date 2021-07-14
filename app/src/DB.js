@@ -725,7 +725,7 @@ class DBManager {
             const pool = await this.#pool;
     
             const results = await pool.request()
-                .query("SELECT TaskId, Time, CreatorId, Date FROM Worklogs")
+                .query("SELECT Id, TaskId, Time, CreatorId, Date FROM Worklogs")
             Log.logInfo("getAllWorklogs");
             return results.recordset;
         } catch(err) {
@@ -744,28 +744,22 @@ class DBManager {
         try {
             const pool = await this.#pool;
             
-            const oldWorklog = this.getWorklogById(worklogId);
+            const oldWorklog = await this.getWorklogById(worklogId);
             for(const key in newWorklog) {
                 oldWorklog[key] = newWorklog[key];
             }
 
+            console.log(oldWorklog);
+
             Validations.validateNumericability(worklogId);
-            Validations.validateNumericability(oldWorklog.taskId);
             Validations.validateNumericability(oldWorklog.time);
-            Validations.validateNumericability(oldWorklog.creatorId);
 
             const results = await pool.request()
-                .input("TaskId",sql.Int,oldWorklog.taskId)
                 .input("Time",sql.Int,oldWorklog.time)
-                .input("CreatorId",sql.Int,oldWorklog.creatorId)
-                .input("Date",sql.NVarChar,oldWorklog.date)
                 .input("WorklogId",sql.Int,worklogId)
                 .query(`
                     UPDATE Worklogs
-                    SET TaskId = @TaskId,
-                        Time = @Time,
-                        CreatorId = @CreatorId,
-                        Date = @Date
+                    SET Time = @Time
                     WHERE Id = @WorklogId
                 `);
             Log.logInfo("updateWorklog");
@@ -1177,6 +1171,37 @@ class DBManager {
             return results.recordsets[0];
         } catch(err) {
             Log.logError("getUserById",err);
+        }
+    }
+
+    /**
+    * @param {array} users
+    * @param {number} teamId
+    * @author Kristian Milanov
+    * @returns {void}
+    */
+    async updateUsersInTeam(users,teamId) {
+        try {
+            const pool = await this.#pool;
+            
+            Validations.validateNumericability(teamId);
+            
+            await pool.request()
+                    .input("TeamId",sql.Int,teamId)
+                    .query("DELETE FROM UsersTeams WHERE TeamId = @TeamId")
+
+            for(let user of users) { 
+                let userId = parseInt(user);
+                
+                await pool.request()
+                    .input("UserId",sql.Int,userId)
+                    .input("TeamId",sql.Int,teamId)
+                    .query("INSERT INTO UsersTeams (TeamId,UserId) VALUES (@TeamId,@UserId)")
+            }
+            
+            Log.logInfo("updateUsersInTeam");
+        } catch(err) {
+            Log.logError("updateUsersInTeam",err);
         }
     }
 

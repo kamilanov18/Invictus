@@ -14,7 +14,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
-<body>
+<body onload="">
 
     <nav class="navbar is-mobile" id="navBar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
@@ -250,8 +250,9 @@
                                     </p>
                                 </div>
                             </div>
-                            <% item++ %>
+                            
                         <% } %>
+                        <% item++ %>
                     <% } %>
             </div>
         </div>
@@ -851,7 +852,7 @@
                 </div>
                 <div class="level"></div>
                 <div class="columns is-multiline is-centered">
-                    <% item = 0; %>
+                    <% item = 1; %>
                     <% for(const obj of data.users) { %>
                         <% if(!obj.IsDeleted) { %>
                         <div class="column is-one-quarter project is-centered pan" onclick="selectedItem=this.id.substring(4,this.id.length); console.log(selectedItem); $('#task-create-modal-user').html(users[selectedItem].FirstName+' '+users[selectedItem].LastName); $('#task-modal-create-select-user').removeClass('is-active'); $('#task-modal-create').addClass('is-active')"
@@ -962,7 +963,7 @@
                 </div>
                 <div class="level"></div>
                 <div class="columns is-multiline is-centered ">
-                    <% item=0 %>
+                    <% item=1 %>
                         <% for(const obj of data.users) {%>
                             <% if(!obj.IsDeleted) { %>
                             <div class="column is-one-quarter project is-centered pan" onclick="selectedItem=this.id; $('#'+selectedItem).toggleClass('selected-item')"
@@ -1101,7 +1102,7 @@
     let tasks = <%- JSON.stringify(data.tasks) %>;
     let teams = <%- JSON.stringify(data.teams) %>;
     let worklogs = <%- JSON.stringify(data.worklogs) %>;
-
+    
     async function openProject(id) {
         let str="";
 

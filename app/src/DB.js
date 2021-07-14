@@ -1046,7 +1046,12 @@ class DBManager {
                 const results = await pool.request()
                     .input("TeamId",sql.Int,team.Id)
                     .input("ProjectId",sql.Int,projectId)
-                    .query("UPDATE TeamsProjects SET ProjectId=@ProjectId WHERE TeamId = @TeamId")
+                    .query("DELETE FROM TeamsProjects WHERE TeamId = @TeamId")
+
+                await pool.request()
+                    .input("TeamId",sql.Int,team.Id)
+                    .input("ProjectId",sql.Int,projectId)
+                    .query("INSERT INTO TeamsProjects (ProjectId, TeamId) VALUES (@ProjectId,@TeamId)")
             }
 
             Log.logInfo("addTeamsToProject");

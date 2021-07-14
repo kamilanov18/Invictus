@@ -139,8 +139,11 @@ app.post("/update-project", async(req,res)=>{
     newProject.tasks = newProject.tasks.split(",");
     
     await DBM.updateProject(newProject.projectId,newProject,req.session.userId);
-    await DBM.addTeamsToProject(newProject.teams, newProject.projectId);
-    await DBM.addTasksToProject(newProject.tasks, newProject.projectId);
+    console.log(newProject.teams);
+    if(newProject.teams)
+        await DBM.addTeamsToProject(newProject.teams, newProject.projectId);
+    if(newProject.task)
+        await DBM.addTasksToProject(newProject.tasks, newProject.projectId);
 
     res.redirect("/admin");
 });

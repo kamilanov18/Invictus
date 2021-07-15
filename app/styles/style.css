@@ -44,7 +44,7 @@ body {
 
 
 .project-box :hover {
-    background-color: #327ab6;
+    border-color: #327ab6;
     cursor: pointer;
 }
 
@@ -74,6 +74,24 @@ body {
     margin-left:1%;
 }
 
-.selected-item {
+.selected-item>.box {
     background-color: rgb(48, 184, 48);
+}
+
+.login-box {
+    
+}
+
+.bg-img {
+    /*background-image: url("/photos/mountain.jpg");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover !important;
+    background-color:#464646;*/
+    background-image: url("/photos/mountain.jpg");
+    overflow: hidden;
+    background-size: cover;
+    width: 100%;
+    height: 100vh;
 }

@@ -1,37 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invictus</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-</head>
-<body>
-  <form method="post" action= "/login">
-    <div class="field">
-        <p class="control has-icons-left has-icons-right">
-          <input class="input" name="username" placeholder="Username" required>
-          <span class="icon is-small is-left">
-            <i class="fas fa-user"></i>
-          </span>
-          <span class="icon is-small is-right">
-            <i class="fas fa-check"></i>
-          </span>
-        </p>
-      </div>
-      <div class="field">
-        <p class="control has-icons-left">
-          <input class="input" name="password" type="password" placeholder="Password" required>
-          <span class="icon is-small is-left">
-            <i class="fas fa-lock"></i>
-          </span>
-        </p>
-      </div>
 
-      <div class="control">
-        <button class="button is-primary">Submit</button>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invictus</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body class="bg-img">
+  <div class="level"></div>
+  <div class="level"></div>
+  <div class="columns is-multiline is-centered has-text-centered">
+    <div class="column is-full is-centered">
+      <img src="/photos/logo_white.png">
+    </div>
+    <div class="column is-full has-text-centered">
+      <p class="title" style="color:white">Create, View, Manage</p>
+    </div>
+    <div class="column is-4 project is-centered">
+      <div class="box login-box">
+        <p class="title">Login</p>
+        <form method="post" action="/login">
+          <div class="field">
+            <p class="control has-icons-left has-icons-right">
+              <input class="input" name="username" placeholder="Username" required>
+              <span class="icon is-small is-left">
+                <i class="fas fa-user"></i>
+              </span>
+              <span class="icon is-small is-right">
+                <i class="fas fa-check"></i>
+              </span>
+            </p>
+          </div>
+          <div class="level"></div>
+          <div class="field">
+            <p class="control has-icons-left">
+              <input class="input" name="password" type="password" placeholder="Password" required>
+              <span class="icon is-small is-left">
+                <i class="fas fa-lock"></i>
+              </span>
+            </p>
+          </div>
+          <div class="level"></div>
+          <div class="control">
+            <button class="button is-primary has-text-centered">Submit</button>
+          </div>
+        </form>
       </div>
-  </form>
+    </div>
+  </div>
 </body>
+
 </html>

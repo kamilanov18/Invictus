@@ -11,7 +11,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poiret+One&display=swap" rel="stylesheet">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="../src/asd.js"></script>
 </head>
 
 <body onload="">
@@ -270,14 +272,14 @@
                 </div>
                 <div class="columns">
                     <div class="column has-text-centered">
-                        <form method="delete" id="delete-project" action="/delete-project">
-                            <button id="deleteButton" class="button is-danger is-outlined">
+
+                            <button id="deleteButton" class="button is-danger is-outlined" onclick="submitDeleteProject()">
                                 <span class="icon is-small">
                                     <i class="fas fa-times"></i>
                                 </span>
                                 <span>Delete</span>
                             </button>
-                        </form>
+
                     </div>
                     <div class="column">
                         <p class="title has-text-centered" id="project-modal-title">testTitle</p>
@@ -354,7 +356,7 @@
                 <div class="columns"><div class="column"></div></div>
                 <div class="columns has-text-centered">
                     <div class="column">
-                        <button class="button is-success" id="project-create-btn">
+                        <button class="button is-success" id="project-create-btn" onclick="submitCreateProject()">
                             <span class="icon is-small">
                               <i class="fas fa-check"></i>
                             </span>
@@ -479,7 +481,7 @@
                 <div class="columns is-multiline is-centered">
                     <% item = 0; %>
                     <% for(const obj of data.teams) { %>
-                        <div class="column is-one-quarter project is-centered pan" onclick="selectedItem=this.id.substring(4,this.id.length); $('#pte-'+selectedItem).toggleClass('selected-item')"
+                        <div class="column is-half project is-centered pan" onclick="selectedItem=this.id.substring(4,this.id.length); $('#pte-'+selectedItem).toggleClass('selected-item')"
                             id="pte-<%= item %>">
                             <div class="box project-box">
                                 <p class="title has-text-centered has-text-light">
@@ -519,7 +521,7 @@
                 <div class="columns is-multiline is-centered">
                     <% item = 0; %>
                     <% for(const obj of data.tasks) { %>
-                        <div class="column is-one-quarter project is-centered pan" onclick="selectedItem=this.id.substring(4,this.id.length); $('#pta-'+selectedItem).toggleClass('selected-item') "
+                        <div class="column is-half project is-centered pan" onclick="selectedItem=this.id.substring(4,this.id.length); $('#pta-'+selectedItem).toggleClass('selected-item') "
                             id="pta-<%= item %>">
                             <div class="box project-box">
                                 <p class="title has-text-centered has-text-light">
@@ -829,7 +831,7 @@
                 <div class="columns is-multiline is-centered">
                     <% item = 0; %>
                     <% for(const obj of data.projects) { %>
-                        <div class="column is-one-quarter project is-centered pan" onclick="selectedItem=this.id.substring(4,this.id.length); console.log(selectedItem); $('#task-create-modal-project').html(projects[selectedItem].Title); $('#task-modal-create-select-project').removeClass('is-active'); $('#task-modal-create').addClass('is-active')"
+                        <div class="column is-half project is-centered pan" onclick="selectedItem=this.id.substring(4,this.id.length); console.log(selectedItem); $('#task-create-modal-project').html(projects[selectedItem].Title); $('#task-modal-create-select-project').removeClass('is-active'); $('#task-modal-create').addClass('is-active')"
                             id="tap-<%= item %>">
                             <div class="box project-box">
                                 <p class="title has-text-centered has-text-light">
@@ -865,7 +867,7 @@
                     <% item = 1; %>
                     <% for(const obj of data.users) { %>
                         <% if(!obj.IsDeleted) { %>
-                        <div class="column is-one-quarter project is-centered pan" onclick="selectedItem=this.id.substring(4,this.id.length); console.log(selectedItem); $('#task-create-modal-user').html(users[selectedItem].FirstName+' '+users[selectedItem].LastName); $('#task-modal-create-select-user').removeClass('is-active'); $('#task-modal-create').addClass('is-active')"
+                        <div class="column is-half project is-centered pan" onclick="selectedItem=this.id.substring(4,this.id.length); console.log(selectedItem); $('#task-create-modal-user').html(users[selectedItem].FirstName+' '+users[selectedItem].LastName); $('#task-modal-create-select-user').removeClass('is-active'); $('#task-modal-create').addClass('is-active')"
                             id="tap-<%= item %>">
                             <div class="box project-box">
                                 <p class="title has-text-centered has-text-light">
@@ -976,7 +978,7 @@
                     <% item=1 %>
                         <% for(const obj of data.users) {%>
                             <% if(!obj.IsDeleted) { %>
-                            <div class="column is-one-quarter project is-centered pan" onclick="selectedItem=this.id; $('#'+selectedItem).toggleClass('selected-item')"
+                            <div class="column is-half project is-centered pan" onclick="selectedItem=this.id; $('#'+selectedItem).toggleClass('selected-item')"
                                 id="teu-<%= item %>">
                                 <div class="box project-box">
                                     <p class="title has-text-centered has-text-light">
@@ -1712,8 +1714,9 @@
         const form = $("#task-create-form");
         var e = document.getElementById("task-create-status");
         var status = e.options[e.selectedIndex].value;
-        const userId = users.filter(user=> user.FirstName==users[selectedItem].FirstName && user.LastName==users[selectedItem].LastName)[0].Id;
-        const projectId = projects.filter(project=> project.Title == projects[selectedItem].Title)[0].Id;
+        let names = $("#task-create-modal-user").html().split(" ");
+        const userId = users.filter(user=> user.FirstName==names[0] && user.LastName==names[1])[0].Id;
+        const projectId = projects.filter(project=> project.Title == $("#task-create-modal-project").html())[0].Id;
 
         $("#task-create-form-title").val($("#task-create-title").val());
         $("#task-create-form-description").val($("#task-create-description").val());
@@ -1777,13 +1780,6 @@
     }
 
     function submitEditTeam() {
-        /*
-        <form id="team-form-update" method="post" action="/update-team" style="display: none;">
-        <input type="text" id="team-form-update-title" name="title">
-        <input type="text" id="team-form-update-users" name="users">
-        <input type="text" id="team-form-update-user-id" name="userId">
-    </form>
-        */
         const form = $("#team-form-update");
         let usersOfTeam = $("#team-update-users").html();
         let userArr = usersOfTeam.split(", ");
@@ -1935,7 +1931,7 @@
         console.log(worklogsOfTask);
         let str="";
         let count=0;
-        for(const log of worklogsOfTask) {
+        for(let log of worklogsOfTask) {
             let logCreator = users.filter(user=> user.Id==log.CreatorId)[0];
             str+=`<div class="column is-half project is-centered pan" id="w-${count}" onclick="selectedWorklog=this.id; openWorklog(selectedWorklog)">
                 <div class="box project-box">
@@ -1950,9 +1946,9 @@
                     </p>
                 </div>
             </div>`;
+            log.HTMLid=`w-${count}-${id}`;
             count++;
         }
-        // FINISH WORKLOGS
 
         console.log();
         $("#task-modal-title").html(tasks[id].Title);
@@ -1968,17 +1964,24 @@
     }
 
     function openWorklog(id) {
-        id=id.substring(2,id.length);
+        //id=id.substring(2,id.length);
         $("#task-modal").removeClass("is-active");
         $("#worklog-modal").addClass("is-active");
-        const taskTitle = tasks.filter(task => task.Id == worklogs[id].TaskId)[0].Title;
-        const creator = users.filter(usr=> usr.Id == worklogs[id].CreatorId)[0];
-        $("#worklog-modal-date-of-creation").html(convertDate(worklogs[id].Date));
+
+        id=id+"-"+selectedTask.substring(3,selectedTask.length);
+        console.log(id);
+        let log = worklogs.filter(x=> x.HTMLid==id)[0];
+        
+
+        const taskTitle = tasks.filter(task => task.Id == log.TaskId)[0].Title;
+        const creator = users.filter(usr=> usr.Id == log.CreatorId)[0];
+
+
+        $("#worklog-modal-date-of-creation").html(convertDate(log.Date));
         $("#worklog-modal-creator").html(creator.FirstName+" "+creator.LastName);
-        $("#worklog-modal-time").html(convertTime(worklogs[id].Time));
+        $("#worklog-modal-time").html(convertTime(log.Time));
         $("#worklog-modal-task").html(taskTitle);
         
-        console.log(id);
     }
 
     async function openTeam(id) {
@@ -2021,7 +2024,7 @@
         $("#user-modal-creator").html(creator.FirstName+" "+creator.LastName);
         $("#user-modal-last-update-date").html(convertDate(users[id].DateOfLastChange));
         $("#user-modal-last-update-user").html(lastUpdateUser.FirstName+" "+lastUpdateUser.LastName);
-        $("#user-modal-is-admin").html(users[id].IsAdmin);
+        $("#user-modal-is-admin").html(users[id].IsAdmin.toString());
     }
 
     function createTask() {
@@ -2171,28 +2174,25 @@
         return parseInt(minutes/60)+" Hours and "+parseInt(minutes%60)+" Minutes";
     }
 
-    const deleteProject = $("#delete-project");
     const delButton = document.querySelector("#deleteButton");
 
-    delButton.addEventListener("click", (e) => {
-        e.preventDefault();
+    async function submitDeleteProject() {
+        const deleteProject = $("#delete-project");
         const title = $("#project-modal-title").html();
         const { Id } = projects.filter(project => project.Title === title)[0];
-        fetch(`/delete-project/${Id}`, { method: "POST" });
+        await fetch(`/delete-project/${Id}`, { method: "POST" });
         location.reload();
-    });
+    }
 
-    const prjCrtBtn = document.querySelector("#project-create-btn");
-    const prjCrtTitle = $("#project-create-title");
-    const prjCrtDescription = $("#project-create-description");
-    prjCrtBtn.addEventListener("click",e=>{
-        e.preventDefault();
+    async function submitCreateProject() {
+        const prjCrtTitle = $("#project-create-title");
+        const prjCrtDescription = $("#project-create-description");
         const title = prjCrtTitle.val()
         const description = prjCrtDescription.val();
 
-        fetch(`/create-project/${title}/${description}`, { method: "POST"});
+        await fetch(`/create-project/${title}/${description}`, { method: "POST"});
         location.reload();
-    });
+    }
 
     
 </script>

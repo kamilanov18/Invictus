@@ -81,11 +81,6 @@ class Validations {
  */
 class Log {
 
-    /**
-     * Static private method, which gets the current date in day, month, year, hour, minute, second format and returns it as a string
-     * @returns {string}
-     * @author Kristian Milanov
-     */
     static #getDate() {
         let date_ob = new Date();
         return `(${date_ob.getDate()}.${date_ob.getMonth()+1}.${date_ob.getYear()+1900} ${date_ob.getHours()}:${date_ob.getMinutes()}:${date_ob.getSeconds()})`;
@@ -287,7 +282,7 @@ class DBManager {
     /**
     * Gets all users
     * @author Kristian Milanov
-    * @returns {void}
+    * @returns {array}
     */
     async getAllUsers() {
         try {
@@ -403,7 +398,7 @@ class DBManager {
 
             const results = await pool.request()
                 .input("TeamId",sql.Int,id)
-                .query("SELECT Title, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Teams WHERE Id = @TeamId");
+                .query("SELECT Id, Title, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Teams WHERE Id = @TeamId");
             Log.logInfo("getTeamById");
             return results.recordset[0];
         } catch(err) {
@@ -414,7 +409,7 @@ class DBManager {
     /**
     * @param {number} projectId
     * @author Kristian Milanov
-    * @returns {void}
+    * @returns {array}
     */
     async getAllTeamsByProject(projectId) {
         try {
@@ -460,7 +455,7 @@ class DBManager {
     /**
     * @param {string} title
     * @author Kristian Milanov
-    * @returns {void}
+    * @returns {team}
     */
     async getTeamByTitle(title) {
         try {
@@ -827,9 +822,9 @@ class DBManager {
 
             const results = await pool.request()
                 .input("ProjectId",sql.Int,id)
-                .query("SELECT Title, Description, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Projects WHERE Id = @ProjectId")
+                .query("SELECT Id, Title, Description, DateOfCreation, CreatorId, DateOfLastChange, LatestChangeUserId FROM Projects WHERE Id = @ProjectId")
             Log.logInfo("getProjectById");
-            return results.recordsets[0];
+            return results.recordset[0];
         } catch(err) {
             Log.logError("getProjectById",err);
         }
@@ -1057,7 +1052,7 @@ class DBManager {
     /**
     * @param {string} title
     * @author Kristian Milanov
-    * @returns {void}
+    * @returns {task}
     */
     async getTaskByTitle(title) {
         try {
@@ -1135,7 +1130,7 @@ class DBManager {
     /**
     * @param {number} teamId
     * @author Kristian Milanov
-    * @returns {void}
+    * @returns {array}
     */
     async getUsersInTeam(teamId) {
         try {
@@ -1156,7 +1151,7 @@ class DBManager {
     /**
     * @param {number} userId
     * @author Kristian Milanov
-    * @returns {void}
+    * @returns {user}
     */
     async getUserById(userId) {
         try {
@@ -1227,6 +1222,164 @@ class DBManager {
             return results.recordset[0].Id;
         } catch(err) {
             Log.logError("validateUser",err);
+        }
+    }
+
+    /**
+    * Returns an array of all teams which the user either created or is a part of.
+    * @param {number} userId
+    * @author Kristian Milanov
+    * @returns {array}
+    */
+    async getTeamsByUserId(userId) {
+        try {
+            const pool = await this.#pool;
+
+            Validations.validateNumericability(userId);
+    
+            let results = await pool.request()
+                .input("UserId",sql.Int,userId)
+                .query("SELECT TeamId FROM UsersTeams WHERE UserId=@UserId");
+            let teams=[];
+
+            for(const team of results.recordset) {
+                teams.push(await this.getTeamById(team.TeamId))
+            }
+
+            results = await pool.request()
+                .input("UserId",sql.Int,userId)
+                .query("SELECT * FROM Teams WHERE CreatorId = @UserId");
+            
+            for(const team of results.recordset) {
+                teams.push(team);
+            }
+
+            teams = this.getUniqueArrayBy(teams,'Id');
+
+            Log.logInfo("getTeamsByUserId");
+            return teams;
+        } catch(err) {
+            Log.logError("getTeamsByUserId",err);
+        }
+    }
+
+    getUniqueArrayBy(arr, key) {
+        return [...new Map(arr.map(item => [item[key], item])).values()];
+    }
+
+    /**
+    * @param {number} userId
+    * @author Kristian Milanov
+    * @returns {object}
+    */
+    async getProjectsByUserId(userId) {
+        try {
+            const pool = await this.#pool;
+            Validations.validateNumericability(userId);
+            let projects =[];
+
+            const results = await pool.request()
+                .input("UserId",sql.Int,userId)
+                .query("SELECT * FROM Projects WHERE CreatorId = @UserId");
+
+            projects = results.recordset;
+            let teams = await this.getTeamsByUserId(userId);
+
+            for(const team of teams) {
+                let project = await pool.request()
+                    .input("TeamId",sql.Int,team.Id)
+                    .query("SELECT ProjectId FROM TeamsProjects WHERE TeamId = @TeamId")
+
+                if(project.recordset[0])
+                    projects.push(await DBM.getProjectById(project.recordset[0].ProjectId));
+            }
+            projects = this.getUniqueArrayBy(projects,'Id');
+
+            Log.logInfo("getProjectsByUserId");
+            return { projects, teams};
+        } catch(err) {
+            Log.logError("getProjectsByUserId",err);
+        }
+    }
+
+    /**
+    * @param {number} userId
+    * @author Kristian Milanov
+    * @returns {object}
+    */
+    async getAllTasksByUserId(userId) {
+        try {
+            const pool = await this.#pool;
+            Validations.validateNumericability(userId);
+            let tasks=[];
+            let results = await pool.request()
+                .input("UserId",sql.Int,userId)
+                .query("SELECT * FROM Tasks WHERE CreatorId = @UserId");
+            tasks = results.recordset;
+            
+            let { projects, teams } = await this.getProjectsByUserId(userId);
+            
+            for(const project of projects) {
+                results = await pool.request()
+                    .input("ProjectId",sql.Int,project.Id)
+                    .query("SELECT * FROM Tasks WHERE ProjectId = @ProjectId")
+
+                if(results.recordset[0])
+                    tasks = tasks.concat(results.recordset);
+            }
+
+            tasks = this.getUniqueArrayBy(tasks,'Id');
+
+            Log.logInfo("getAllTasksByUserId");
+            return { tasks, projects, teams };
+        } catch(err) {
+            Log.logError("getAllTasksByUserId",err);
+        }
+    }
+
+    /**
+    * @param {number} userId
+    * @author Kristian Milanov
+    * @returns {object}
+    */
+    async getWorklogsByUserId(userId) {
+        try {
+            const pool = await this.#pool;
+            Validations.validateNumericability(userId);
+            let worklogs=[];
+            let { tasks, projects, teams } = await this.getAllTasksByUserId(userId);
+
+            for(const task of tasks) {
+                const results = await pool.request()
+                    .input("TaskId",sql.Int,task.Id)
+                    .query("SELECT * FROM Worklogs WHERE TaskId = @TaskId");
+                worklogs = worklogs.concat(results.recordset);
+            }
+
+            worklogs=this.getUniqueArrayBy(worklogs,'Id');
+
+            Log.logInfo("getWorklogsByUserId");
+            return { worklogs, tasks, projects, teams };
+        } catch(err) {
+            Log.logError("getWorklogsByUserId",err);
+        }
+    }
+
+    /**
+    * @param {*} userId
+    * @author Kristian Milanov
+    * @returns {object}
+    */
+    async getRelevantDataByUserId(userId) {
+        try {
+            Validations.validateNumericability(userId);
+    
+            let data = await this.getWorklogsByUserId(userId);
+
+            Log.logInfo("getRelevantDataByUserId");
+            return data;
+        } catch(err) {
+            Log.logError("getRelevantDataByUserId",err);
         }
     }
 };

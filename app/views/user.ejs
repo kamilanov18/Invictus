@@ -231,7 +231,7 @@
     </section>
 
     <section>
-
+        <form method="post" action="/create-project">
         <div class="modal" id="project-modal-create">
             <div class="modal-background"></div>
             <div class="modal-content">
@@ -257,7 +257,7 @@
                             <div class="field-body">
                               <div class="field">
                                 <p class="control">
-                                  <input class="input" id="project-create-title" type="text" placeholder="Project title">
+                                  <input class="input" name="title" id="project-create-title" type="text" placeholder="Project title">
                                 </p>
                               </div>
                             </div>
@@ -272,7 +272,7 @@
                             <div class="field-body">
                               <div class="field">
                                 <p class="control">
-                                  <input class="input" id="project-create-description" type="text" placeholder="Project description">
+                                  <input class="input" name="description" id="project-create-description" type="text" placeholder="Project description">
                                 </p>
                               </div>
                             </div>
@@ -281,7 +281,7 @@
                     <div class="columns"><div class="column"></div></div>
                     <div class="columns has-text-centered">
                         <div class="column">
-                            <button class="button is-success" id="project-create-btn" onclick="submitCreateProject()">
+                            <button class="button is-success" id="project-create-btn" onclick="">
                                 <span class="icon is-small">
                                   <i class="fas fa-check"></i>
                                 </span>
@@ -292,7 +292,7 @@
                 </div>
             </div>
         </div>
-
+    </form>
     </section>
 
     <section>

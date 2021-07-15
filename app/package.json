@@ -15,6 +15,7 @@
     "ejs": "^3.1.6",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
+    "helmet": "^4.6.0",
     "jsdoc": "^3.6.7",
     "msnodesqlv8": "^2.2.0",
     "mssql": "^7.1.3",

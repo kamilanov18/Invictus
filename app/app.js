@@ -21,6 +21,7 @@ async function hasPermission(userId, itemId) {
     return 0;
 }
 
+//app.disable("x-powered-by")
 app.use(session({
     name: sessionConfig.name,
     resave: false,
@@ -143,16 +144,12 @@ app.get("/get-users-teams/:id", async(req,res)=>{
     res.send(teams)
 });
 
-app.post("/create-project/:title/:description", async (req,res)=>{
-    const project = { title: req.params.title, description: req.params.description, creatorId: req.session.userId };
+app.post("/create-project", async (req,res)=>{
+    const project = { title: req.body.title, description: req.body.description, creatorId: req.session.userId };
     await DBM.createProject(project);
-    let user = await DBM.getUserById(req.session.userId);
-    console.log(user);
-    if(user[0].IsAdmin) {
-        res.redirect("/admin");
-    } else {
-        res.redirect("/user");
-    }
+
+    //res.sendStatus(201);
+    res.redirect("/admin");
 });
 
 app.post("/update-project", async(req,res)=>{

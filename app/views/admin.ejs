@@ -332,7 +332,7 @@
                         <div class="field-body">
                           <div class="field">
                             <p class="control">
-                              <input class="input" id="project-create-title" type="text" placeholder="Project title">
+                              <input class="input" name="title" id="project-create-title" type="text" placeholder="Project title">
                             </p>
                           </div>
                         </div>
@@ -347,7 +347,7 @@
                         <div class="field-body">
                           <div class="field">
                             <p class="control">
-                              <input class="input" id="project-create-description" type="text" placeholder="Project description">
+                              <input class="input" name="description" id="project-create-description" type="text" placeholder="Project description">
                             </p>
                           </div>
                         </div>
@@ -356,7 +356,7 @@
                 <div class="columns"><div class="column"></div></div>
                 <div class="columns has-text-centered">
                     <div class="column">
-                        <button class="button is-success" id="project-create-btn" onclick="submitCreateProject()">
+                        <button class="button is-success" id="project-create-btn" onclick="">
                             <span class="icon is-small">
                               <i class="fas fa-check"></i>
                             </span>
@@ -1664,12 +1664,18 @@
 <script>
     var selectedItem, selectedProject, selectedTask, selectedTeam, selectedUser, selectedWorklog;
 
+    /*let projects = JSON.parse("<%- JSON.stringify(data.projects).replace(/\"/g, '\\\"') %>");
+    let users = JSON.parse("<%- JSON.stringify(data.users).replace(/\"/g, '\\\"') %>");
+    let tasks = JSON.parse("<%- JSON.stringify(data.tasks).replace(/\"/g, '\\\"') %>");
+    let teams = JSON.parse("<%- JSON.stringify(data.teams).replace(/\"/g, '\\\"') %>");
+    let worklogs = JSON.parse("<%- JSON.stringify(data.worklogs).replace(/\"/g, '\\\"') %>");*/
+
     let projects = <%- JSON.stringify(data.projects) %>;
     let users = <%- JSON.stringify(data.users) %>;
     let tasks = <%- JSON.stringify(data.tasks) %>;
     let teams = <%- JSON.stringify(data.teams) %>;
     let worklogs = <%- JSON.stringify(data.worklogs) %>;
-    
+
     async function openProject(id) {
         let str="";
 
@@ -2183,17 +2189,6 @@
         await fetch(`/delete-project/${Id}`, { method: "POST" });
         location.reload();
     }
-
-    async function submitCreateProject() {
-        const prjCrtTitle = $("#project-create-title");
-        const prjCrtDescription = $("#project-create-description");
-        const title = prjCrtTitle.val()
-        const description = prjCrtDescription.val();
-
-        await fetch(`/create-project/${title}/${description}`, { method: "POST"});
-        location.reload();
-    }
-
     
 </script>
 
